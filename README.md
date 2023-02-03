@@ -58,7 +58,7 @@ install.packages(c('optparse','bigreadr','bigsnpr','bigparallelr', 'bigmemory','
 
 ## Using MEBayesSL
 
-# MEBayesSL consists of two steps: (1) MEBayesSL.R: obtain scores estimated under various tuning parameter settings, and (2) SL-combine.R: integrate results under all tuning parameter settings by a Super Learner to obtain the final PRS.
+MEBayesSL consists of two steps: (1) MEBayesSL.R: obtain scores estimated under various tuning parameter settings, and (2) SL-combine.R: integrate results under all tuning parameter settings by a Super Learner to obtain the final PRS.
 
 
 ## Example
