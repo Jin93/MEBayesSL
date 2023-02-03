@@ -4,9 +4,8 @@ MEBayesSL is an R-based command line tool for implementing ME-Bayes SL: a powerf
 
 The preprint will be put on bioRxiv very soon and is available upon request. Please contact Jin Jin (Jin.Jin@Pennmedicine.upenn.edu) for details.
 
-## Installation & Data Preparation
+## Installation & Data Preparation ([Warning: tutorial incomplete])
 
-[Warning: tutorial incomplete]
 - Download the source files from https://github.com/Jin93/MEBayesSL/. From now on we call the folder /MEBayesSL/ for simplicity.
 
 Download the ref_bim.txt from [this link](https://www.dropbox.com/s/58uzwqewxv34wal/ref_bim.txt?dl=0) and save it under /MEBayesSL/.
@@ -25,7 +24,7 @@ Two options for lD reference panel are provided: 1000 Genomes Project phase 3 sa
 
 [EUR reference data](https://www.dropbox.com/scl/fo/utm7wfvl4ushx15a7n31p/h?dl=0&rlkey=7s6o9bgzzim72f0e32eybt552) (~8.6G): `tar -zxvf EUR.tar.gz`
 
-[AFR reference data](https://www.dropbox.com/scl/fo/er4mc951im0hy304yvf0v/h?dl=0&rlkey=ejz18r9kzs07sm93v370kop6n) (~12.1G): `tar -zxvf AFR.tar.gz`
+[AFR reference data](https://www.dropbox.com/s/iwqg65uieevfzj2/AFR.zip?dl=0) (~7.69G): `tar -zxvf AFR.tar.gz`
 
 [AMR reference data](https://www.dropbox.com/scl/fo/23i6edbvvebbas1bnkhkg/h?dl=0&rlkey=u2qef4h6pg40qrhxwuwd8eksr) (~10.3G): `tar -zxvf AMR.tar.gz`
 
