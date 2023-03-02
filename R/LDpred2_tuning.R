@@ -47,7 +47,7 @@ option_list = list(
               help="How much chatter to print: 0=nothing; 1=minimal; 2=all [default: %default]"),
   make_option("--cleanup", action="store", default=T, type="logical",
               help="Cleanup temporary files or not [default: %default]"),
-  make_option("--NCORES", action="store", default=17, type="integer",
+  make_option("--NCORES", action="store", default=1, type="integer",
               help="How many cores to use [default: %default]")
 )
 opt = parse_args(OptionParser(option_list=option_list))
