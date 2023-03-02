@@ -61,13 +61,14 @@ Note: there are several command lines that need to be customized by users:
 ## Using MEBayesSL
 
 MEBayesSL workflow: 
-![Alt text](/img/MEBayesSL_Workflow.png "ME-Bayes SL Workflow")
+<p align="center">
 <img
   src="/img/MEBayesSL_Workflow.png"
   title="ME-Bayes SL Workflow"
   width=60% 
   height=60%>
-  
+</p>
+
 #### [Step 0] 
 Obtain tuned causal SNP proportion  ($p_k, k=1,2,\ldots,K$) and heritability ($h^2_k, k=1,2,\ldots,K$) for each training ancestry group from LDpred2. These parameters will be used to specify the prior causal SNP proportions and heritability parameters in ME-Bayes.
 
