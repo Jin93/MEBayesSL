@@ -145,7 +145,7 @@ MEBayesSL.R --PATH_package --PATH_out --PATH_plink --FILE_sst --pop --chrom --bf
 
 - cors_additional (optional): additional candidate values for tuning parameter: genetic correlation across ancestry groups, example: 3 groups with label 1,2,3, want to add two additional settings: cor_setting1(1,2),cor_setting1(1,3),cor_setting1(2,3);cor_setting2(1,2),cor_setting2(1,3),cor_setting2(2,3).
 
--ps_additional (optional): typically not necessary. Additional candidate values for tuning parameter: ancestry-specific causal SNP proportions, example: 3 groups with label 1,2,3, want to add two additional settings: p1_setting1,p2_setting1,p3_setting1;p1_setting2,p2_setting2,p3_setting2.
+- ps_additional (optional): typically not necessary. Additional candidate values for tuning parameter: ancestry-specific causal SNP proportions, example: 3 groups with label 1,2,3, want to add two additional settings: p1_setting1,p2_setting1,p3_setting1;p1_setting2,p2_setting2,p3_setting2.
 
 - SL_library (optional): the base learners implemented in SuperLearner, separated by comma. Default: SL.glmnet,SL.ridge,SL.lm.
 
