@@ -20,19 +20,13 @@ suppressMessages(library(MASS)) # for mvrnorm and ginv
 suppressMessages(library(reshape)) # for melt
 suppressMessages(library(parallel))
 suppressMessages(library(devtools))
-# suppressMessages(library(mvnfast))
 suppressMessages(library(genio)) # for read_plink
 suppressMessages(library(dplyr))
-# suppressMessages(library(gdata)) 
-# suppressMessages(library(R.utils)) # for gzip
-# suppressMessages(library(pROC))
 
 suppressMessages(library(pryr))
 suppressMessages(library(Matrix))
 suppressMessages(library(lavaan))
 suppressMessages(library(xtable))
-# library(corpcor) #for pseudoinverse
-# suppressMessages(library(DescTools))
 suppressMessages(library(SuperLearner))
 
 option_list = list(
