@@ -171,7 +171,7 @@ target_pop='AFR'
 Note: load the R version for which the required R packages were installed, in this example, R Version 4.2.2 Patched (2023-03-01 r83924).
 
 
-#### Step 1: Run LDpred2 by chromosome (by submitting 22 jobs simultaneously, each for one chromosome). In each job, the algorithm will run under different tuning parameter settings in parallel.
+### Step 1: Run LDpred2 by chromosome (by submitting 22 jobs simultaneously, each for one chromosome). In each job, the algorithm will run under different tuning parameter settings in parallel.
 
 ``` r
 Rscript ${package}/R/LDpred2_jobs.R \
@@ -189,7 +189,7 @@ Rscript ${package}/R/LDpred2_jobs.R \
 
 
 
-#### Step 2: Wait until all LDpred2 jobs are completed. The next step is to obtain tuned LDpred2 parameters. Tuned LDpred2 effect size estimates and the optimal tuning parameters are saved in ${path_out}.
+### Step 2: Wait until all LDpred2 jobs are completed. The next step is to obtain tuned LDpred2 parameters. Tuned LDpred2 effect size estimates and the optimal tuning parameters are saved in ${path_out}.
 
 ``` r
 Rscript ${package}/R/LDpred2_tuning.R \
@@ -208,7 +208,7 @@ Rscript ${package}/R/LDpred2_tuning.R \
 
 ```
 
-#### Step 3: Run ME-Bayes by chromosome (by submitting 22 jobs simultaneously, each for one chromosome). In each job, the algorithm will run under different tuning parameter settings in parallel.
+### Step 3: Run ME-Bayes by chromosome (by submitting 22 jobs simultaneously, each for one chromosome). In each job, the algorithm will run under different tuning parameter settings in parallel.
 
 ``` r
 Rscript ${package}/R/MEBayes_jobs.R \
@@ -225,7 +225,7 @@ Rscript ${package}/R/MEBayes_jobs.R \
 
 ```
 
-#### Step 4: Combine PRS models generated under different parameter settings with a Super Learner (SL) algorithm to obtain the final ensembled ME-Bayes SL PRS model. Here, with the testing dataset provided, the prediction $R^2$ of the final ME-Bayes SL PRS model is reported on the testing set.
+### Step 4: Combine PRS models generated under different parameter settings with a Super Learner (SL) algorithm to obtain the final ensembled ME-Bayes SL PRS model. Here, with the testing dataset provided, the prediction $R^2$ of the final ME-Bayes SL PRS model is reported on the testing set.
 
 ``` r
 Rscript ${package}/R/MEBayesSL.R \
