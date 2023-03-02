@@ -48,8 +48,10 @@ Two options for lD reference panel are provided: 1000 Genomes Project phase 3 sa
 
 Launch R and install required libraries:
 
+``` r
 install.packages(c('optparse','bigreadr','bigsnpr','bigparallelr', 'bigmemory','stringr','caret','Rcpp', 'RcppArmadillo','RcppTN','inline','doMC','foreach','doParallel','data.table','readr','MASS','reshape','parallel',
 'devtools','genio','dplyr','pryr','Matrix','lavaan','xtable','SuperLearner'))
+```
 
 Note: there are several command lines that need to be customized by users:
 1. The command line "module load conda_R" in `LDpred2_jobs.R` and `MEBayes_jobs.R` may need to be modified.
