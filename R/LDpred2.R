@@ -15,7 +15,7 @@ option_list = list(
   make_option("--PATH_package", action="store", default=NA, type='character',
               help="Path to the directory where the downloaded files (decompressed) are saved [required]"),
   make_option("--PATH_ref", action="store", default=NA, type='character',
-              help="Path to the directory where the LD reference data by ancestry group and chromosome are saved [required]"),
+              help="Path to the directory where the raw LD reference data by ancestry group and chromosome are saved [required]"),
   make_option("--PATH_out", action="store", default=NA, type='character',
               help="Path to the output directory where the results are saved [required]"),
   make_option("--FILE_sst", action="store", default=NA, type='character',

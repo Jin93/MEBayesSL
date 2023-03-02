@@ -16,7 +16,7 @@ option_list = list(
               help="Path to the directory where the downloaded files (decompressed) are saved [required]"),
   make_option("--PATH_data", action="store", default=NA, type='character',
               help="Path to the directory where the training data by ancestry group are saved [required]"),
-  make_option("--PATH_ref", action="store", default=NA, type='character',
+  make_option("--PATH_LDref", action="store", default=NA, type='character',
               help="Path to the directory where the LD reference data by ancestry group and chromosome are saved [required]"),
   make_option("--PATH_out", action="store", default=NA, type='character',
               help="Path to the output directory where the results are saved [required]"),
@@ -103,7 +103,7 @@ for (chr in chrs){
   cat("\n", file=zz)
   cat(paste0('Rscript ',opt$PATH_package,'/R/LDpred2.R '), file = zz, sep = " ")
   cat(paste0(' --PATH_package ', opt$PATH_package), file = zz, sep = " ")
-  cat(paste0(' --PATH_ref ', opt$PATH_ref), file = zz, sep = " ")
+  cat(paste0(' --PATH_ref ', opt$PATH_LDref, '/raw'), file = zz, sep = " ")
   cat(paste0(' --PATH_out ', opt$PATH_out), file = zz, sep = " ")
   cat(paste0(' --FILE_sst ', opt$FILE_sst), file = zz, sep = " ")
   cat(paste0(' --pop ', opt$pop), file = zz, sep = " ")

@@ -14,7 +14,7 @@ Download the ref_bim.txt from [this link](https://www.dropbox.com/s/58uzwqewxv34
 
 The LD reference data contains SNP information and LD estimates by LD block for genetic variants that are in the [HapMap3](https://www.broadinstitute.org/medical-and-population-genetics/hapmap-3) plus [MEGA Chip](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5156387/) list. Note: in some scenarios, the training GWAS sample for each population consists of multiple ancestry groups, and ideally a customized LD reference dataset should be created for each population with matched ancestral composition. Code for constructing such LD reference dataset can be requested (Jin.Jin@Pennmedicine.upenn.edu).
 
-Two options for lD reference panel are provided: 1000 Genomes Project phase 3 samples, or UK Biobank samples. Each reference dataset contains two folders: 
+Two options for lD reference panel are provided: 1000 Genomes Project phase 3 samples, or UK Biobank samples, both under genome build 37 (GRCh37). Each reference data contains two folders: 
 
 (1) `./LD/`: raw LD reference genotype data, which are input files for estimating LD matrices in LDpred2 and for an intermediate step of summarizing LD information in ME-Bayes. Save the decompressed folders in ${path_ref}.
 
@@ -28,22 +28,22 @@ Two options for lD reference panel are provided: 1000 Genomes Project phase 3 sa
 
 [AMR reference data](https://www.dropbox.com/s/mev5zyf4x6m076q/AMR.zip?dl=0) (~8.80G): `tar -zxvf AMR.tar.gz`
 
-[EAS reference data](https://www.dropbox.com/scl/fo/kku4g55cwmyvibcv3r8r4/h?dl=0&rlkey=1hb0ti13c9152w0ywvg8w2tzm) (~6.6G): `tar -zxvf EAS.tar.gz`
+[EAS reference data](https://www.dropbox.com/s/o28mlovtakv5n7v/EAS.zip?dl=0) (~5.63G): `tar -zxvf EAS.tar.gz`
 
-[SAS reference data](https://www.dropbox.com/scl/fo/vs60oq1htom6jrxth74f7/h?dl=0&rlkey=zwd5r22ksfg1q7rvfxobsls95) (~8.4G): `tar -zxvf SAS.tar.gz`
+[SAS reference data](https://www.dropbox.com/s/idp02rgl8xv379b/SAS.zip?dl=0) (~2.60G): `tar -zxvf SAS.tar.gz`
 
 
 #### 2. LD reference data constructed based on UK Biobank samples (10,000 EUR, 4,585 AFR, 687 AMR, 1,010 EAS, 5,427 SAS):
 
-[EUR reference data](https://www.dropbox.com/scl/fo/awwpla4007lfsf2tq6bz9/h?dl=0&rlkey=rcw5h9xobiz9ffnrspmxtcpqu) (~8.6G): `tar -zxvf EUR.tar.gz`
+[EUR reference data]() (~13.15G): `tar -zxvf EUR.tar.gz`
 
-[AFR reference data](https://www.dropbox.com/scl/fo/7b6g1hpeptqj3svaed81n/h?dl=0&rlkey=5xjwb8e4z88tumzry9auulapl) (~12.1G): `tar -zxvf AFR.tar.gz`
+[AFR reference data]() (~11.59G): `tar -zxvf AFR.tar.gz`
 
-[AMR reference data](https://www.dropbox.com/scl/fo/0jjme1nbpnks3f179c4rs/h?dl=0&rlkey=bv2rfmozl1k1n52gxdieambmw) (~10.3G): `tar -zxvf AMR.tar.gz`
+[AMR reference data](https://www.dropbox.com/s/2ba4tsbhz03rg83/AMR.zip?dl=0) (~4.88G): `tar -zxvf AMR.tar.gz`
 
-[EAS reference data](https://www.dropbox.com/scl/fo/vmxesrldhgnsfenv2cb9m/h?dl=0&rlkey=05dpno7qno19s1pjwavjwh9to) (~6.6G): `tar -zxvf EAS.tar.gz`
+[EAS reference data](https://www.dropbox.com/s/uofu788707dp4xv/EAS.zip?dl=0) (~4.27G): `tar -zxvf EAS.tar.gz`
 
-[SAS reference data](https://www.dropbox.com/scl/fo/z9qdf5wdq0d20tlozy0fe/h?dl=0&rlkey=qks9nkqe6vjcap1o0f2l9s373) (~8.4G): `tar -zxvf SAS.tar.gz`
+[SAS reference data]() (~11.44G): `tar -zxvf SAS.tar.gz`
 
 
 Launch R and install required libraries:
@@ -58,11 +58,16 @@ Note: there are several command lines that need to be customized by users:
 
 ## Using MEBayesSL
 
-MEBayesSL consists of two steps: (1) MEBayesSL.R: obtain scores estimated under various tuning parameter settings, and (2) SL-combine.R: integrate results under all tuning parameter settings by a Super Learner to obtain the final PRS.
+MEBayesSL workflow: 
 
+Step 0: Obtain tuned causal SNP proportion and heritability for each training ancestry group from LDpred2. These parameters will be used to specify the prior causal SNP proportions ($p_k, k=1,2,\ldots,K$) and heritability parameters in ME-Bayes.
+
+Step 1: MEBayesSL.R: obtain scores estimated under various tuning parameter settings, and (2) SL-combine.R: integrate results under all tuning parameter settings by a Super Learner to obtain the final PRS.
+
+Step 2: MEBayesSL.R: obtain scores estimated under various tuning parameter settings, and (2) SL-combine.R: integrate results under all tuning parameter settings by a Super Learner to obtain the final PRS.
 
 ## Example
-Download [example data](https://www.dropbox.com/s/xxw3t17k66il3k5/example.tar.gz?dl=0), decompress it by `tar -zxvf example.tar.gz` and save the files under the directory ${path_example}. Create a new folder `path_out` (e.g., in this example, `/dcs04/nilanjan/data/jjin/mebayessl/test`) to save example results. Run the example code below with your own data directories and check if the results are consistent with the results here: [example results]().
+Download [example data](https://www.dropbox.com/s/xxw3t17k66il3k5/example.tar.gz?dl=0), decompress it by `tar -zxvf example.tar.gz` and save the files under the directory ${path_example}. Download the 1000 Genomes reference data and save the decompressed files in ${path_LDref}. Create a new folder `path_out` (e.g., in this example, `/dcs04/nilanjan/data/jjin/mebayessl/test`) to save the output. Run the example code below with your own data directories and check if the results are consistent with the results here: [example results]().
 
 
 
@@ -70,8 +75,7 @@ Download [example data](https://www.dropbox.com/s/xxw3t17k66il3k5/example.tar.gz
 ``` r
 package='/dcs04/nilanjan/data/jjin/MEBayesSL'
 path_data='/dcs04/nilanjan/data/jjin/example'
-path_ref='/dcs04/nilanjan/data/jjin/MEBayesSL/'
-path_LD='/dcs04/nilanjan/data/jjin/LD/'
+path_LDref='/dcs04/nilanjan/data/jjin/LD_1kg'
 path_out='/dcs04/nilanjan/data/jjin/mebayessl/test'
 path_plink='/dcl01/chatterj/data/jin/software/plink2'
 target_pop='AFR'
@@ -83,7 +87,7 @@ target_pop='AFR'
 Rscript ${package}/R/LDpred2_jobs.R \
 --PATH_package ${package} \
 --PATH_data ${path_data} \
---PATH_ref ${path_ref} \
+--PATH_LDref ${path_LDref} \
 --PATH_out ${path_out} \
 --FILE_sst ${path_data}/summdata/EUR.txt,${path_data}/summdata/AFR.txt \
 --pop EUR,AFR \
@@ -120,8 +124,7 @@ Rscript ${package}/R/LDpred2_tuning.R \
 Rscript ${package}/R/MEBayes_jobs.R \
 --PATH_package ${package} \
 --PATH_data ${path_data} \
---PATH_ref ${path_ref} \
---PATH_LD ${path_LD} \
+--PATH_LDref ${path_LDref} \
 --PATH_out ${path_out} \
 --FILE_sst ${path_data}/summdata/EUR.txt,${path_data}/summdata/AFR.txt \
 --pop EUR,AFR \

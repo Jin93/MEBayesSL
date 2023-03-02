@@ -40,10 +40,8 @@ option_list = list(
               help="Path to the directory where the downloaded files (decompressed) are saved [required]"),
   make_option("--PATH_data", action="store", default=NA, type='character',
               help="Path to the directory where the training data are saved [required]"),
-  make_option("--PATH_ref", action="store", default=NA, type='character',
-              help="Path to the directory where the raw LD reference genotype data by ancestry group and chromosome are saved [required]"),
-  make_option("--PATH_LD", action="store", default=NA, type='character',
-              help="Path to the directory where the precalculated block-wise reference LD matrices by ancestry group and chromosome (generated based on the raw genotype data in PATH_ref) are saved [required]"),
+  make_option("--PATH_LDref", action="store", default=NA, type='character',
+              help="Path to the directory where the LD reference data by ancestry group and chromosome are saved [required]"),
   make_option("--PATH_out", action="store", default=NA, type='character',
               help="Path to the output directory where the results are saved [required]"),
   make_option("--FILE_sst", action="store", default=NA, type='character',
@@ -77,8 +75,6 @@ if ( opt$verbose == 2 ) { SYS_PRINT = F } else { SYS_PRINT = T }
 NCORES <- opt$NCORES
 races = str_split(opt$pop,",")[[1]]; K <- length(races)
 sumdata_paths = str_split(opt$FILE_sst,",")[[1]]
-ref_paths <- paste0(opt$PATH_ref,"/",races)
-LD_paths <- paste0(opt$PATH_LD,"/",races)
 out_paths <- paste0(opt$PATH_out,"/",races)
 opt$chrom <- gsub("-",":",opt$chrom)
 eval(parse(text=paste0("chrs = c(",opt$chrom,")")))
@@ -129,8 +125,7 @@ for (chr in chrs){
   cat("\n", file=zz)
   cat(paste0('Rscript ',opt$PATH_package,'/R/MEBayes.R '), file = zz, sep = " ")
   cat(paste0(' --PATH_package ', opt$PATH_package), file = zz, sep = " ")
-  cat(paste0(' --PATH_ref ', opt$PATH_ref), file = zz, sep = " ")
-  cat(paste0(' --PATH_LD ', opt$PATH_LD), file = zz, sep = " ")
+  cat(paste0(' --PATH_LDref ', opt$PATH_LDref), file = zz, sep = " ")
   cat(paste0(' --PATH_out ', opt$PATH_out), file = zz, sep = " ")
   cat(paste0(' --FILE_sst ', opt$FILE_sst), file = zz, sep = " ")
   cat(paste0(' --pop ', opt$pop), file = zz, sep = " ")

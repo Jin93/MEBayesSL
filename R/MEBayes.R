@@ -38,10 +38,8 @@ suppressMessages(library(SuperLearner))
 option_list = list(
   make_option("--PATH_package", action="store", default=NA, type='character',
               help="Path to the directory where the downloaded files (decompressed) are saved [required]"),
-  make_option("--PATH_ref", action="store", default=NA, type='character',
-              help="Path to the directory where the raw LD reference genotype data by ancestry group and chromosome are saved [required]"),
-  make_option("--PATH_LD", action="store", default=NA, type='character',
-              help="Path to the directory where the precalculated block-wise reference LD matrices by ancestry group and chromosome (generated based on the raw genotype data in PATH_ref) are saved [required]"),
+  make_option("--PATH_LDref", action="store", default=NA, type='character',
+              help="Path to the directory where the LD reference data by ancestry group and chromosome are saved [required]"),
   make_option("--PATH_out", action="store", default=NA, type='character',
               help="Path to the output directory where the results are saved [required]"),
   make_option("--FILE_sst", action="store", default=NA, type='character',
@@ -75,8 +73,8 @@ if ( opt$verbose == 2 ) { SYS_PRINT = F } else { SYS_PRINT = T }
 NCORES <- opt$NCORES
 races = str_split(opt$pop,",")[[1]]; K <- length(races)
 sumdata_paths = str_split(opt$FILE_sst,",")[[1]]
-ref_paths <- paste0(opt$PATH_ref,"/",races)
-LD_paths <- paste0(opt$PATH_LD,"/",races)
+ref_paths <- paste0(opt$PATH_LDref,"/raw/",races) # raw LD reference genotype data by ancestry group and chromosome
+LD_paths <- paste0(opt$PATH_LDref,"/LD/",races) # precalculated block-wise reference LD matrices by ancestry group and chromosome (generated based on the raw reference genotype data)
 out_paths <- paste0(opt$PATH_out,"/",races)
 chr = opt$chrom
 ldpred2_params_path = str_split(opt$LDpred2_params,",")[[1]]
