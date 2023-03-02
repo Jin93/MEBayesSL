@@ -61,12 +61,32 @@ Note: there are several command lines that need to be customized by users:
 ## Using MEBayesSL
 
 MEBayesSL workflow: 
+![Alt text](/img/MEBayesSL_Workflow.png "ME-Bayes SL Workflow")
 
-Step 0: Obtain tuned causal SNP proportion and heritability for each training ancestry group from LDpred2. These parameters will be used to specify the prior causal SNP proportions ($p_k, k=1,2,\ldots,K$) and heritability parameters in ME-Bayes.
+[Step 0] Obtain tuned causal SNP proportion  ($p_k, k=1,2,\ldots,K$) and heritability ($h^2_k, k=1,2,\ldots,K$) for each training ancestry group from LDpred2. These parameters will be used to specify the prior causal SNP proportions and heritability parameters in ME-Bayes.
 
-Step 1: MEBayesSL.R: obtain scores estimated under various tuning parameter settings, and (2) SL-combine.R: integrate results under all tuning parameter settings by a Super Learner to obtain the final PRS.
+LDpred2_jobs.R: submit LDpred2 jobs by chromosome.
+```r
+LDpred2_jobs.R --PATH_package --PATH_data --PATH_LDref --PATH_out --FILE_sst --pop --chrom --bfile_tuning --NCORES
+```
 
-Step 2: MEBayesSL.R: obtain scores estimated under various tuning parameter settings, and (2) SL-combine.R: integrate results under all tuning parameter settings by a Super Learner to obtain the final PRS.
+LDpred2_tuning.R: obtain tuned LDpred2 parameters.
+```r
+LDpred2_tuning.R --PATH_package --PATH_out --PATH_plink --FILE_sst --pop --chrom 1-22 --bfile_tuning --pheno_tuning --bfile_testing --pheno_testing --testing --NCORES
+```
+
+[Step 1] ME-Bayes: a Bayesian model that jointly models the GWAS summary data across all training populations to obtain a total of $L \times K$ PRS models under L different tuning parameter settings for $Pr⁡(δ_{1j},…,δ_{Kj})$ (functions of $p_k$s) and $\rho_{k_1,k_2}$s across all K training populations.
+
+```r
+MEBayes_jobs.R --PATH_package --PATH_data --PATH_LDref --PATH_out --FILE_sst --pop --LDpred2_params --chrom --bfile_tuning --NCORES
+```
+
+[Step 2] For the target population, apply the super learning (SL) algorithm (default base learners: elastic net regression, ridge regression, and linear regression) to train an “optimal” linear combination of the ($L \time K$) PRS models, which we call the ME-Bayes SL PRS model, based on the tuning set of the target population. Optional: the prediction performance of the final ME-Bayes SL PRS model can be reported on an independent testing set, if the testing set is provided as an input.
+
+```r
+MEBayesSL.R --PATH_package --PATH_out --PATH_plink --FILE_sst --pop --chrom --bfile_tuning --pheno_tuning --bfile_testing --pheno_testing --testing --NCORES
+```
+
 
 ## Example
 Download [example data](https://www.dropbox.com/s/xxw3t17k66il3k5/example.tar.gz?dl=0), decompress it by `tar -zxvf example.tar.gz` and save the files under the directory ${path_example}. Download the 1000 Genomes reference data and save the decompressed files in ${path_LDref}. Create a new folder `path_out` (e.g., in this example, `/dcs04/nilanjan/data/jjin/mebayessl/test`) to save the output. Run the example code below with your own data directories and check if the results are consistent with the results here: [example results]().
@@ -137,7 +157,7 @@ Rscript ${package}/R/MEBayes_jobs.R \
 
 ```
 
-### Step 4: Combine PRS models generated under different parameter settings with a Super Learner (SL) algorithm to obtain the final ensembled ME-Bayes SL PRS model.
+### Step 4: Combine PRS models generated under different parameter settings with a Super Learner (SL) algorithm to obtain the final ensembled ME-Bayes SL PRS model. Here, with the testing dataset provided, the prediction $R^2$ of the final ME-Bayes SL PRS model is reported on the testing set.
 
 ``` r
 Rscript ${package}/R/MEBayesSL.R \
