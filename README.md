@@ -66,7 +66,7 @@ MEBayesSL workflow:
   src="/img/MEBayesSL_Workflow.png"
   alt=""
   title="ME-Bayes SL Workflow"
-  style="display: inline-block; margin: 0 auto; max-width: 200px">
+  style="display: inline-block; margin: 0 auto; max-width: 50px">
   
 #### [Step 0] 
 Obtain tuned causal SNP proportion  ($p_k, k=1,2,\ldots,K$) and heritability ($h^2_k, k=1,2,\ldots,K$) for each training ancestry group from LDpred2. These parameters will be used to specify the prior causal SNP proportions and heritability parameters in ME-Bayes.
