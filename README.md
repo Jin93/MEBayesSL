@@ -4,7 +4,7 @@ MEBayesSL is an R-based command line tool for implementing ME-Bayes SL, a powerf
 
 The preprint will be put on bioRxiv soon and is available upon request. Please contact Jin Jin (Jin.Jin@Pennmedicine.upenn.edu) for details.
 
-## Installation & Data Preparation ([Warning: tutorial incomplete])
+## Installation & Data Preparation
 
 - Download the source files from https://github.com/Jin93/MEBayesSL/. From now on we call the folder /MEBayesSL/ for simplicity.
 
