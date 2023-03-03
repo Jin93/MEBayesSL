@@ -10,7 +10,7 @@ The preprint will be put on bioRxiv soon and is available upon request. Please c
 
 Download the ref_bim.txt from [this link](https://www.dropbox.com/s/58uzwqewxv34wal/ref_bim.txt?dl=0) and save it under /MEBayesSL/.
 
-- Download and decompress the LD reference data that contains: (1) raw LD reference genotype data and the (2) accompanying LD information and save them in (1) ${path_ref} and (2) ${path_LD}, respectively. 
+- Download and decompress the LD reference data and save the decompressed folder as ${path_LDref}.
 
 The LD reference data contains SNP information and LD estimates by LD block for genetic variants that are in the [HapMap3](https://www.broadinstitute.org/medical-and-population-genetics/hapmap-3) plus [MEGA Chip](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5156387/) list. Note: in some scenarios, the training GWAS sample for each population consists of multiple ancestry groups, and ideally a customized LD reference dataset should be created for each population with matched ancestral composition. Code for constructing such LD reference dataset can be requested (Jin.Jin@Pennmedicine.upenn.edu).
 
