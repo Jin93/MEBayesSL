@@ -15,7 +15,7 @@ option_list = list(
   make_option("--PATH_package", action="store", default=NA, type='character',
               help="Path to the directory where the downloaded files (decompressed) are saved [required]"),
   make_option("--PATH_ref", action="store", default=NA, type='character',
-              help="Path to the directory where the raw LD reference data by ancestry group and chromosome are saved [required]"),
+              help="Path to the directory where the LD reference data by ancestry group and chromosome are saved [required]"),
   make_option("--PATH_out", action="store", default=NA, type='character',
               help="Path to the output directory where the results are saved [required]"),
   make_option("--FILE_sst", action="store", default=NA, type='character',
@@ -49,7 +49,7 @@ suppressWarnings(dir.create(opt$PATH_out))
 
 races = str_split(opt$pop,",")[[1]]; K <- length(races)
 sumdata_paths = str_split(opt$FILE_sst,",")[[1]]
-ref_paths <- paste0(opt$PATH_ref,"/",races)
+ref_paths <- paste0(opt$PATH_ref,"/",races, "/raw")
 out_paths <- paste0(opt$PATH_out,"/",races)
 
 opt$chrom <- gsub("-",":",opt$chrom)
@@ -124,6 +124,8 @@ for(mmm in 1:K){
     snp_readBed(paste0(ref_path, '/chr',chr,'.bed'))
   }
   obj.bigSNP <- snp_attach(paste0(ref_path, '/chr',chr,'.rds'))
+  
+  system(paste0('rm -rf ', out_path,'/tmp/ref_files/chr', chr, '.OMNI.interpolated_genetic_map'))
   
   G   <- obj.bigSNP$genotypes
   CHR <- obj.bigSNP$map$chromosome

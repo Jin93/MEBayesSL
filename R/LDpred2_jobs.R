@@ -40,7 +40,7 @@ option_list = list(
               help="How much chatter to print: 0=nothing; 1=minimal; 2=all [default: %default]"),
   make_option("--cleanup", action="store", default=T, type="logical",
               help="Cleanup temporary files or not [default: %default]"),
-  make_option("--NCORES", action="store", default=17, type="integer",
+  make_option("--NCORES", action="store", default=13, type="integer",
               help="How many cores to use [default: %default]")
 )
 opt = parse_args(OptionParser(option_list=option_list))
@@ -51,8 +51,6 @@ suppressWarnings(dir.create(opt$PATH_out))
 
 races = str_split(opt$pop,",")[[1]]; K <- length(races)
 sumdata_paths = str_split(opt$FILE_sst,",")[[1]]
-ref_paths <- paste0(opt$PATH_ref,"/",races)
-out_paths <- paste0(opt$PATH_out,"/",races)
 
 opt$chrom <- gsub("-",":",opt$chrom)
 eval(parse(text=paste0("chrom = c(",opt$chrom,")")))
@@ -103,7 +101,7 @@ for (chr in chrs){
   cat("\n", file=zz)
   cat(paste0('Rscript ',opt$PATH_package,'/R/LDpred2.R '), file = zz, sep = " ")
   cat(paste0(' --PATH_package ', opt$PATH_package), file = zz, sep = " ")
-  cat(paste0(' --PATH_ref ', opt$PATH_LDref, '/raw'), file = zz, sep = " ")
+  cat(paste0(' --PATH_ref ', opt$PATH_LDref), file = zz, sep = " ")
   cat(paste0(' --PATH_out ', opt$PATH_out), file = zz, sep = " ")
   cat(paste0(' --FILE_sst ', opt$FILE_sst), file = zz, sep = " ")
   cat(paste0(' --pop ', opt$pop), file = zz, sep = " ")

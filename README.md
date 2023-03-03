@@ -35,9 +35,9 @@ Two options for lD reference panel are provided: 1000 Genomes Project phase 3 sa
 
 #### 2. LD reference data constructed based on UK Biobank samples (10,000 EUR, 4,585 AFR, 687 AMR, 1,010 EAS, 5,427 SAS):
 
-[EUR reference data]() (~13.15G): `tar -zxvf EUR.tar.gz`
+[EUR reference data](https://www.dropbox.com/s/mo66onjd1t7vute/EUR.zip?dl=0) (~13.15G): `tar -zxvf EUR.tar.gz`
 
-[AFR reference data]() (~11.59G): `tar -zxvf AFR.tar.gz`
+[AFR reference data](https://www.dropbox.com/s/gwscd8kw1acytfh/AFR.zip?dl=0) (~11.59G): `tar -zxvf AFR.tar.gz`
 
 [AMR reference data](https://www.dropbox.com/s/2ba4tsbhz03rg83/AMR.zip?dl=0) (~4.88G): `tar -zxvf AMR.tar.gz`
 
@@ -55,7 +55,7 @@ install.packages(c('optparse','bigreadr','bigsnpr','bigparallelr', 'bigmemory','
 
 Note: there are several command lines that need to be customized by users:
 1. The command line "module load conda_R" in `LDpred2_jobs.R` and `MEBayes_jobs.R` may need to be modified.
-2. The command lines on lines 121 - 122 in `LDpred2_jobs.R` and lines 148 - 149 in `MEBayes_jobs.R`: "qsub -cwd -l mem_free=23G,h_vmem=23G,h_fsize=100g", may need to be modified.
+2. The command lines on lines 121 - 122 in `LDpred2_jobs.R` and lines 148 - 149 in `MEBayes_jobs.R`: "qsub -cwd -l mem_free=23G,h_vmem=23G,h_fsize=100g", may need to be modified. Note: the memory required for MEBayes_jobs.R should be customized according to the number of training ancestry groups.
 
 
 ## MEBayesSL Manual
@@ -139,7 +139,7 @@ MEBayesSL.R --PATH_package --PATH_out --PATH_plink --FILE_sst --pop --chrom --bf
 
 - cleanup: cleanup temporary files or not. Default: T.
 
-- NCORES: how many cores to use. (Default: 17 for LDpred2_jobs.R, 5 for MEBayes_jobs.R, and 1 for LDpred2_tuning.R and MEBayesSL.R)
+- NCORES: how many cores to use. (Default: 13 for LDpred2_jobs.R, 5 for MEBayes_jobs.R, and 1 for LDpred2_tuning.R and MEBayesSL.R)
 
 - LDpred2_params (required): path to the directory where the tuned LDpred2 parameters (population-specific causal SNP proportions, heritability and whether or not a sparse model is used) are saved, separated by comma.
 
@@ -156,7 +156,7 @@ MEBayesSL.R --PATH_package --PATH_out --PATH_plink --FILE_sst --pop --chrom --bf
 
 
 ## Example
-Download [example data](https://www.dropbox.com/s/xxw3t17k66il3k5/example.tar.gz?dl=0), decompress it by `tar -zxvf example.tar.gz` and save the files under the directory ${path_example}. Download the 1000 Genomes reference data and save the decompressed files in ${path_LDref}. Create a new folder `path_out` (e.g., in this example, `/dcs04/nilanjan/data/jjin/mebayessl/test`) to save the output. Run the example code below with your own data directories and check if the results are consistent with the results here: [example results]().
+Download [example data](https://www.dropbox.com/s/xxw3t17k66il3k5/example.tar.gz?dl=0), decompress it by `tar -zxvf example.tar.gz` and save the files under the directory ${path_example}. Download the 1000 Genomes reference data and save the decompressed files in ${path_LDref}. Create a new folder `path_out` (e.g., in this example, `/dcs04/nilanjan/data/jjin/mebayessl/test`) to save the output. Run the example code below with your own data directories and check if the results are consistent with the results here: [example results](https://www.dropbox.com/s/hjmqghn2jva0950/MEBayesSL_example_data_results.zip?dl=0).
 
 ```r 
 module load conda_R
@@ -183,9 +183,10 @@ Rscript ${package}/R/LDpred2_jobs.R \
 --pop EUR,AFR \
 --chrom 1-22 \
 --bfile_tuning ${path_data}/sample_data/EUR/tuning_geno,${path_data}/sample_data/AFR/tuning_geno \
---NCORES 17
+--NCORES 13
 
 ```
+
 
 
 
@@ -242,3 +243,9 @@ Rscript ${package}/R/MEBayesSL.R \
 --testing TRUE \--NCORES 1
 
 ```
+
+
+## Questions
+
+Please report any issues on the Issues page, I will respond as soon as possible. For a quicker response, please contact Jin.Jin@Pennmedicine.upenn.edu.
+

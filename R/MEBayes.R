@@ -67,8 +67,8 @@ if ( opt$verbose == 2 ) { SYS_PRINT = F } else { SYS_PRINT = T }
 NCORES <- opt$NCORES
 races = str_split(opt$pop,",")[[1]]; K <- length(races)
 sumdata_paths = str_split(opt$FILE_sst,",")[[1]]
-ref_paths <- paste0(opt$PATH_LDref,"/raw/",races) # raw LD reference genotype data by ancestry group and chromosome
-LD_paths <- paste0(opt$PATH_LDref,"/LD/",races) # precalculated block-wise reference LD matrices by ancestry group and chromosome (generated based on the raw reference genotype data)
+ref_paths <- paste0(opt$PATH_LDref, "/", races, "/raw") # raw LD reference genotype data by ancestry group and chromosome
+LD_paths <- paste0(opt$PATH_LDref, "/", races, "/LD") # precalculated block-wise reference LD matrices by ancestry group and chromosome (generated based on the raw reference genotype data)
 out_paths <- paste0(opt$PATH_out,"/",races)
 chr = opt$chrom
 ldpred2_params_path = str_split(opt$LDpred2_params,",")[[1]]
@@ -174,6 +174,7 @@ for (k in 1:K){
   out_path <- out_paths[k]
   
   suppressWarnings(dir.create(paste0(out_path, "/tmp/ref_files")))
+  system(paste0('rm -rf ', out_path,'/tmp/ref_files/chr', chr, '.OMNI.interpolated_genetic_map'))
   
   temfile = paste0(ref_path,'/chr',chr,'.bk')
   system(paste0('rm -rf ',temfile))
