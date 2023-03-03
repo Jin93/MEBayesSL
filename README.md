@@ -8,7 +8,7 @@ The preprint will be put on bioRxiv soon and is available upon request. Please c
 
 - Download the source files from https://github.com/Jin93/MEBayesSL/. From now on we call the folder /MEBayesSL/ for simplicity.
 
-Download the ref_bim.txt from [this link](https://www.dropbox.com/s/58uzwqewxv34wal/ref_bim.txt?dl=0) and save it under /MEBayesSL/.
+- Download the ref_bim.txt from [this link](https://www.dropbox.com/s/58uzwqewxv34wal/ref_bim.txt?dl=0) and save it under /MEBayesSL/.
 
 - Download and decompress the LD reference data and save the decompressed folder as ${path_LDref}.
 
@@ -46,7 +46,7 @@ Two options for lD reference panel are provided: 1000 Genomes Project phase 3 sa
 [SAS reference data](https://www.dropbox.com/s/hrzbh19ao1zutzt/SAS.zip?dl=0) (~11.44G): `tar -zxvf SAS.tar.gz`
 
 
-Launch R and install required libraries:
+- Launch R and install required libraries:
 
 ``` r
 install.packages(c('optparse','bigreadr','bigsnpr','bigparallelr', 'bigmemory','stringr','caret','Rcpp', 'RcppArmadillo','RcppTN','inline','doMC','foreach','doParallel','data.table','readr','MASS','reshape','parallel',
