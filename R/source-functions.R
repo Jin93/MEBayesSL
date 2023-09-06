@@ -283,7 +283,7 @@ tuning.params.setup = function(races, cors_additional){
 }
 
 
-MEBayes = function(ss, chain, n.burnin, niter, settings, r, r.sign, 
+MUSS = function(ss, chain, n.burnin, niter, settings, r, r.sign, 
                     M, Mt, indmat, tem, beta_init, sigmasq, Bh, C.sfbm,
                     H2, snp.index, sparse, snpinfo){
   K = ncol(indmat)

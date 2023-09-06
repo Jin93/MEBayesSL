@@ -114,19 +114,19 @@ for ( f in files ) {
 rm(list="files")
 
 
-source(paste0(opt$PATH_package,"/R/MEBayes-functions.R"))
+source(paste0(opt$PATH_package,"/R/MUSS-functions.R"))
 
 
 # First, check if LDpred2 outputs were saved for all chromosomes.
-outputstatus = sapply(1:K, function(x){sapply(1:22, function(y){file.exists(paste0(opt$PATH_out,'/tmp/MEBayes_beta_in_all_settings_bychrom/', races[x], '-chr', y,'.txt'))})})
+outputstatus = sapply(1:K, function(x){sapply(1:22, function(y){file.exists(paste0(opt$PATH_out,'/tmp/MUSS_beta_in_all_settings_bychrom/', races[x], '-chr', y,'.txt'))})})
 
 if (sum(outputstatus) < 44){
   rerun = which(rowSums(outputstatus) < 2)
-  cat(paste0('\n** Terminated: need to rerun ME-Bayes for the following chromosomes: ', paste(rerun, collapse = ','), ' first. **\n'))
-  cat(paste0('\n** Rerun MEBayes_jobs.R with --chrom ', paste(rerun, collapse = ','), ' **\n'))
+  cat(paste0('\n** Terminated: need to rerun MUSS for the following chromosomes: ', paste(rerun, collapse = ','), ' first. **\n'))
+  cat(paste0('\n** Rerun MUSS_jobs.R with --chrom ', paste(rerun, collapse = ','), ' **\n'))
 }
 
-settings <- bigreadr::fread2(paste0(opt$PATH_out,'/tmp/MEBayes_beta_in_all_settings_bychrom/settings_',chrs[22],".txt"));
+settings <- bigreadr::fread2(paste0(opt$PATH_out,'/tmp/MUSS_beta_in_all_settings_bychrom/settings_',chrs[22],".txt"));
 
 ## Combine estimated SNP effect sizes across all chromosomes
 if (sum(outputstatus) == 44){
@@ -153,7 +153,7 @@ if (sum(outputstatus) == 44){
     ## Combine all chromosomes
     score <- foreach(j = 1:length(chrs), .combine='rbind') %dopar% {
       chr <- chrs[j]
-      betas <- bigreadr::fread2(paste0(opt$PATH_out, '/tmp/MEBayes_beta_in_all_settings_bychrom/', race, '-chr',chr,'.txt'))
+      betas <- bigreadr::fread2(paste0(opt$PATH_out, '/tmp/MUSS_beta_in_all_settings_bychrom/', race, '-chr',chr,'.txt'))
       return(betas)
     }
     # registerDoMC(1)
@@ -162,8 +162,8 @@ if (sum(outputstatus) == 44){
     colnames(score) <- c("rsid","a1",paste0("score",1:(ncol(score)-2)))
     allsnps = unique(c(allsnps, score$rsid))
     betafiles[[mmm]] = score
-    bigreadr::fwrite2(score, paste0(opt$PATH_out,"/MEBayes/beta_file_", race, ".txt"), col.names = T, sep="\t")#, nThread=NCORES)
-    bigreadr::fwrite2(settings, paste0(opt$PATH_out,"/MEBayes/beta_settings.txt"), col.names = T, sep="\t")#, nThread=NCORES)
+    bigreadr::fwrite2(score, paste0(opt$PATH_out,"/MUSS/beta_file_", race, ".txt"), col.names = T, sep="\t")#, nThread=NCORES)
+    bigreadr::fwrite2(settings, paste0(opt$PATH_out,"/MUSS/beta_settings.txt"), col.names = T, sep="\t")#, nThread=NCORES)
   }
 }
 
@@ -197,10 +197,10 @@ for (k in 1:K){
   }
   snpunion = unique(c(snpunion, snptemp))
 }
-bigreadr::fwrite2(scoreall, paste0(opt$PATH_out,"/MEBayes/beta_file_all.txt"), col.names = T, sep="\t")#, nThread=NCORES)
+bigreadr::fwrite2(scoreall, paste0(opt$PATH_out,"/MUSS/beta_file_all.txt"), col.names = T, sep="\t")#, nThread=NCORES)
 
-if ( opt$verbose >= 1 ) cat(paste0("\n** PRSs in all tuning parameter settings are saved in ", opt$PATH_out,"/MEBayes/beta_file.txt **\n"))
-if ( opt$verbose >= 1 ) cat(paste0("\n** Their corresponding tuning parameter settings are saved in ", opt$PATH_out,"/MEBayes/beta_settings.txt **\n"))
+if ( opt$verbose >= 1 ) cat(paste0("\n** PRSs in all tuning parameter settings are saved in ", opt$PATH_out,"/MUSS/beta_file.txt **\n"))
+if ( opt$verbose >= 1 ) cat(paste0("\n** Their corresponding tuning parameter settings are saved in ", opt$PATH_out,"/MUSS/beta_settings.txt **\n"))
 
 
 ############
@@ -221,7 +221,7 @@ if(("SL.nnet" %in% SL_library) & opt$linear_score){
 
 ########################################################################
 ########################################################################
-settings <- fread2(paste0(opt$PATH_out,"/MEBayes/beta_settings.txt"), sep="\t")#, nThread=NCORES); 
+settings <- fread2(paste0(opt$PATH_out,"/MUSS/beta_settings.txt"), sep="\t")#, nThread=NCORES); 
 nprs <- nrow(settings) * K
 
 for (mmm in 1:K.target){
@@ -235,7 +235,7 @@ for (mmm in 1:K.target){
   pheno_testing <- pheno_testing_vec[mmm]
   covar_testing <- covar_testing_vec[mmm]
   
-  suppressWarnings(dir.create(paste0(opt$PATH_out, "/MEBayes/",target[mmm])))
+  suppressWarnings(dir.create(paste0(opt$PATH_out, "/MUSS/",target[mmm])))
   
   if ( opt$verbose >= 1 ) cat("\n** Step 3. Calculate cross-ancestry PRS under all parameter settings for tuning samples **\n")
   
@@ -276,7 +276,7 @@ for (mmm in 1:K.target){
   ############
   ## Step 3.2. Calculate scores for all tuning parameter settings on tuning samples
   
-  if ( opt$verbose == 2 ) cat("Calculating ME-Bayes PRS for tuning samples\n")
+  if ( opt$verbose == 2 ) cat("Calculating MUSS PRS for tuning samples\n")
   
   suppressWarnings(dir.create(paste0(opt$PATH_out,"/tmp/PRS")))
   
@@ -285,12 +285,12 @@ for (mmm in 1:K.target){
   
   arg <- paste0(opt$PATH_plink ," --threads 1",#NCORES,
                 " --bfile ", bfile_tuning,
-                " --score ", opt$PATH_out,"/MEBayes/beta_file_all.txt header-read",
+                " --score ", opt$PATH_out,"/MUSS/beta_file_all.txt header-read",
                 " cols=+scoresums,-scoreavgs --score-col-nums 3-",nprs+2,
-                " --out ",opt$PATH_out,"/tmp/PRS/MEBayes_tuning_",target[mmm])
+                " --out ",opt$PATH_out,"/tmp/PRS/MUSS_tuning_",target[mmm])
   system( arg , ignore.stdout=SYS_PRINT,ignore.stderr=SYS_PRINT)
   
-  SCORE <- fread2(paste0(opt$PATH_out,"/tmp/PRS/MEBayes_tuning_",target[mmm],".sscore"))
+  SCORE <- fread2(paste0(opt$PATH_out,"/tmp/PRS/MUSS_tuning_",target[mmm],".sscore"))
   
   m <- match( paste(fam[,1],fam[,2]) , paste(SCORE[,1],SCORE[,2]) )
   m.keep <- !is.na(m)
@@ -323,29 +323,29 @@ for (mmm in 1:K.target){
                                         family = gaussian(),
                                         SL.library = SL_library))
   }
-  suppressWarnings(dir.create(paste0(opt$PATH_out, "/MEBayesSL/")))
+  suppressWarnings(dir.create(paste0(opt$PATH_out, "/MUSSEL/")))
   
-  save(sl, score_drop, file = paste0(opt$PATH_out,"/MEBayesSL/superlearner_function_", target[mmm], ".RData"))
+  save(sl, score_drop, file = paste0(opt$PATH_out,"/MUSSEL/superlearner_function_", target[mmm], ".RData"))
   
   if ( opt$verbose >= 1 ) cat(paste0("Superlearner model of ensemble PRS saved in ", opt$PATH_out,"/superlearner_function_", target[mmm], ".RData \n"))
   
   # Predictions of ensembled scores from PROSPER on tuning samples
   after_ensemble_tuning <- cbind(pheno[,1:2], ensemble_score = predict(sl, SCORE, onlySL = TRUE)[[1]])
   fwrite2(after_ensemble_tuning, paste0(opt$PATH_out,"/tmp/PRS/after_ensemble_tuning_", target[mmm],".txt"), col.names = T, sep="\t", nThread=NCORES)
-  if ( opt$verbose == 2 ) cat(paste0("ME-Bayes SL PRS for tuning samples saved in ", opt$PATH_out,"/tmp/PRS/after_ensemble_tuning_", target[mmm],".txt \n"))
+  if ( opt$verbose == 2 ) cat(paste0("MUSSEL PRS for tuning samples saved in ", opt$PATH_out,"/tmp/PRS/after_ensemble_tuning_", target[mmm],".txt \n"))
   
   # Get tuning R2
   fit <- lm(pheno[,3]~after_ensemble_tuning$ensemble_score)
   R2 <- summary(fit)$r.square
   R2_res <- data.frame(tuning_R2=R2)
-  fwrite2(R2_res, paste0(opt$PATH_out,"/MEBayesSL/R2_", target[mmm],".txt"), col.names = T, sep="\t", nThread=NCORES)
+  fwrite2(R2_res, paste0(opt$PATH_out,"/MUSSEL/R2_", target[mmm],".txt"), col.names = T, sep="\t", nThread=NCORES)
   
   rm(list=c("after_ensemble_tuning"))
   
   
   if(opt$linear_score){
     
-    score <- fread2(paste0(opt$PATH_out,"/MEBayes/beta_file_all.txt"), sep="\t", nThread=NCORES)
+    score <- fread2(paste0(opt$PATH_out,"/MUSS/beta_file_all.txt"), sep="\t", nThread=NCORES)
     if(length(score_drop)>0){ score <- score[,-score_drop,drop=F] }
     
     # Get weights of all scores (wi) by predicting on an identity matrix
@@ -358,15 +358,15 @@ for (mmm in 1:K.target){
     ensemble_score <- data.frame(score[,1:2], weight = as.matrix(score[,-(1:2)]) %*% matrix(coef, ncol=1))
     ensemble_score <- ensemble_score[ensemble_score$weight!=0,]
     
-    fwrite2(ensemble_score, paste0(opt$PATH_out,"/MEBayesSL/MEBayesSL_beta_file_", target[mmm], ".txt"), col.names = T, sep="\t", nThread=NCORES)
+    fwrite2(ensemble_score, paste0(opt$PATH_out,"/MUSSEL/MUSSEL_beta_file_", target[mmm], ".txt"), col.names = T, sep="\t", nThread=NCORES)
     
-    if ( opt$verbose >= 1 ) cat(paste0("Ensembled PROSPER model is saved in ", opt$PATH_out,"/MEBayesSL/MEBayesSL_prs_file_", target[mmm], ".txt \n"))
+    if ( opt$verbose >= 1 ) cat(paste0("Ensembled PROSPER model is saved in ", opt$PATH_out,"/MUSSEL/MUSSEL_prs_file_", target[mmm], ".txt \n"))
     
     rm(list=c("score","ensemble_score","coef","tmp"))
     
   }
   
-  if ( (opt$verbose >= 1) & !(opt$testing)) cat(paste0("** COMPLETED! R2 on tuning samples saved in ", opt$PATH_out,"/MEBayesSL/R2_", target[mmm],".txt \n"))
+  if ( (opt$verbose >= 1) & !(opt$testing)) cat(paste0("** COMPLETED! R2 on tuning samples saved in ", opt$PATH_out,"/MUSSEL/R2_", target[mmm],".txt \n"))
   
   rm(list=c("SCORE","pheno","fam"))
   
@@ -417,12 +417,12 @@ for (mmm in 1:K.target){
     
     arg <- paste0(opt$PATH_plink ," --threads 1",#NCORES,
                   " --bfile ", bfile_testing,
-                  " --score ", opt$PATH_out,"/MEBayes/beta_file_all.txt header-read",
+                  " --score ", opt$PATH_out,"/MUSS/beta_file_all.txt header-read",
                   " cols=+scoresums,-scoreavgs --score-col-nums 3-",nprs+2,
-                  " --out ",opt$PATH_out,"/tmp/PRS/MEBayes_testing_",target[mmm])
+                  " --out ",opt$PATH_out,"/tmp/PRS/MUSS_testing_",target[mmm])
     system( arg , ignore.stdout=SYS_PRINT,ignore.stderr=SYS_PRINT)
     
-    SCORE <- fread2(paste0(opt$PATH_out,"/tmp/PRS/MEBayes_testing_",target[mmm],".sscore"))
+    SCORE <- fread2(paste0(opt$PATH_out,"/tmp/PRS/MUSS_testing_",target[mmm],".sscore"))
     
     m <- match( paste(fam[,1],fam[,2]) , paste(SCORE[,1],SCORE[,2]) )
     m.keep <- !is.na(m)
@@ -445,9 +445,9 @@ for (mmm in 1:K.target){
     R2 <- summary(fit)$r.square
     R2_res <- cbind(R2_res,data.frame(testing_R2=R2))
     
-    fwrite2(R2_res, paste0(opt$PATH_out,"/MEBayesSL/R2_", target[mmm], ".txt"), col.names = T, sep="\t", nThread=NCORES)
+    fwrite2(R2_res, paste0(opt$PATH_out,"/MUSSEL/R2_", target[mmm], ".txt"), col.names = T, sep="\t", nThread=NCORES)
     
-    if ( opt$verbose >= 1 ) cat(paste0("** COMPLETED! ME-Bayes SL R2 saved in ", opt$PATH_out,"/MEBayesSL/R2_", target[mmm], ".txt \n"))
+    if ( opt$verbose >= 1 ) cat(paste0("** COMPLETED! MUSSEL R2 saved in ", opt$PATH_out,"/MUSSEL/R2_", target[mmm], ".txt \n"))
     
   }
   

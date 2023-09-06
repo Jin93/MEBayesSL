@@ -113,7 +113,7 @@ suppressWarnings(dir.create(paste0(rscripts_path,'logfile')))
 
 
 for (chr in chrs){
-  filen<-paste0(rscripts_path, 'MEBayes_rscript_chr', chr, ".sh")
+  filen<-paste0(rscripts_path, 'MUSS_rscript_chr', chr, ".sh")
   system(paste0('rm -rf ',filen))
   file.create(filen)
   zz <- file(filen, "w")
@@ -123,7 +123,7 @@ for (chr in chrs){
   cat(paste0('#$ -o ',rscripts_path,'logfile'), file = zz, sep = "\n")
   cat(paste0('#$ -e ',rscripts_path,'logfile'), file = zz, sep = "\n")
   cat("\n", file=zz)
-  cat(paste0('Rscript ',opt$PATH_package,'/R/MEBayes.R '), file = zz, sep = " ")
+  cat(paste0('Rscript ',opt$PATH_package,'/R/MUSS.R '), file = zz, sep = " ")
   cat(paste0(' --PATH_package ', opt$PATH_package), file = zz, sep = " ")
   cat(paste0(' --PATH_LDref ', opt$PATH_LDref), file = zz, sep = " ")
   cat(paste0(' --PATH_out ', opt$PATH_out), file = zz, sep = " ")
@@ -140,14 +140,14 @@ for (chr in chrs){
 }
 
 for (chr in chrs){
-  if ((chr >= 1)&(chr < 13)) system(paste0('qsub -cwd -l mem_free=35G,h_vmem=35G,h_fsize=100g ' ,rscripts_path, 'MEBayes_rscript_chr', chr, ".sh"))
-  if ((chr >= 13)&(chr < 23)) system(paste0('qsub -cwd -l mem_free=19G,h_vmem=19G,h_fsize=100g ' ,rscripts_path, 'MEBayes_rscript_chr', chr, ".sh"))
+  if ((chr >= 1)&(chr < 13)) system(paste0('qsub -cwd -l mem_free=35G,h_vmem=35G,h_fsize=100g ' ,rscripts_path, 'MUSS_rscript_chr', chr, ".sh"))
+  if ((chr >= 13)&(chr < 23)) system(paste0('qsub -cwd -l mem_free=19G,h_vmem=19G,h_fsize=100g ' ,rscripts_path, 'MUSS_rscript_chr', chr, ".sh"))
 }
 
-print(paste0('R scripts submitted for running MEBayes by chromosome in parallel.'))
+print(paste0('R scripts submitted for running MUSS by chromosome in parallel.'))
 
 cat(paste0('\n** Wait until all following files have been saved: **\n'))
-cat(paste0('\n** ', opt$PATH_out, '/tmp/MEBayes_beta_in_all_settings_bychrom/{', paste(races,collapse = ','), '}-chr{1..22}.txt **\n'))
+cat(paste0('\n** ', opt$PATH_out, '/tmp/MUSS_beta_in_all_settings_bychrom/{', paste(races,collapse = ','), '}-chr{1..22}.txt **\n'))
 cat(paste0('\n** Done. **\n'))
 
 

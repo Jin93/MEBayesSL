@@ -98,10 +98,10 @@ if (opt$ps_additional != 'NA'){
 
 suppressWarnings(dir.create(opt$PATH_out))
 suppressWarnings(dir.create(paste0(opt$PATH_out, "/tmp")))
-suppressWarnings(dir.create(paste0(opt$PATH_out, "/tmp/MEBayes_beta_in_all_settings_bychrom")))
-suppressWarnings(dir.create(paste0(opt$PATH_out, "/MEBayes/"))) # before ensemble by SL
+suppressWarnings(dir.create(paste0(opt$PATH_out, "/tmp/MUSS_beta_in_all_settings_bychrom")))
+suppressWarnings(dir.create(paste0(opt$PATH_out, "/MUSS/"))) # before ensemble by SL
 
-sourceCpp(paste0(opt$PATH_package,"/src/MEBayes.cpp"))
+sourceCpp(paste0(opt$PATH_package,"/src/MUSS.cpp"))
 source(paste0(opt$PATH_package,"/R/source-functions.R"))
 
 ########################################################################
@@ -371,7 +371,7 @@ niter = 8e1 * K
 ########################################################################
 ########################################################################
 
-if ( opt$verbose >= 1 ) cat(paste0("\n** Step 2. Running ME-Bayes on chromosome ", chr, ". ** \n"))
+if ( opt$verbose >= 1 ) cat(paste0("\n** Step 2. Running MUSS on chromosome ", chr, ". ** \n"))
 ncores = ifelse(NCORES >= nrow(settings), nrow(settings), NCORES)
 
 registerDoMC(ncores)
@@ -383,11 +383,11 @@ ff <- foreach(ss = 1:nrow(settings), .combine='c', .multicombine=TRUE) %dopar% {
   r = rs[[settings[ss,'r.indx']]]
   p.causal = as.numeric(settings[ss,paste0('p.causal',1:K)]);
   
-  MEBayesout = MEBayes(ss, chain=1, n.burnin, niter, settings, r, r.sign,
+  MUSSout = MUSS(ss, chain=1, n.burnin, niter, settings, r, r.sign,
                     M, Mt, indmat, tem, beta_init, sigmasq, Bh, C.sfbm,
                     H2, snp.index, sparse, snpinfo)
   
-  list(MEBayesout)
+  list(MUSSout)
 }
 
 ############
@@ -400,9 +400,9 @@ for (k in 1:K){
     tempbeta[is.na(tempbeta)] <- 0; tempbeta[tempbeta > 5] <- 0; tempbeta[tempbeta < -5] <- 0
     prs.file[,paste0('BETA',ss)] = tempbeta
   }
-  write.table(prs.file,file = paste0(opt$PATH_out, '/tmp/MEBayes_beta_in_all_settings_bychrom/', races[k], '-chr',chr,'.txt'), col.names = T,row.names = F,quote=F)
+  write.table(prs.file,file = paste0(opt$PATH_out, '/tmp/MUSS_beta_in_all_settings_bychrom/', races[k], '-chr',chr,'.txt'), col.names = T,row.names = F,quote=F)
 }
-fwrite2(settings, paste0(opt$PATH_out,'/tmp/MEBayes_beta_in_all_settings_bychrom/settings_',chr,".txt"), col.names = T, sep="\t", nThread=1)
+fwrite2(settings, paste0(opt$PATH_out,'/tmp/MUSS_beta_in_all_settings_bychrom/settings_',chr,".txt"), col.names = T, sep="\t", nThread=1)
 
 if ( opt$verbose >= 1 ) cat(paste0('\n** Completed! Estimated SNP effect sizes and tuning parameter settings saved for chromosome ', chr, ' **\n'))
 
