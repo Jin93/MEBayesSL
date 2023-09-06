@@ -1,14 +1,14 @@
-# MEBayesSL
+# MUSSEL
 
-MEBayesSL is an R-based command line tool for implementing ME-Bayes SL, a powerful method for developing ancestry-specific polygenic risk score (PRS) that integrates information from GWAS summary statistics and external LD reference data from multiple populations (ancestry groups). ME-Bayes SL infers SNP effect sizes via a Bayesian model with an induced prior correlation structure across populations followed by an ensemble learning step with the [Super Learner](https://www.degruyter.com/document/doi/10.2202/1544-6115.1309/html).
+MUSSEL is an R-based command line tool for implementing MUSSEL, a powerful method for developing ancestry-specific polygenic risk score (PRS) that integrates information from GWAS summary statistics and external LD reference data from multiple populations (ancestry groups). MUSSEL infers SNP effect sizes via a Bayesian model with an induced prior correlation structure across populations followed by an ensemble learning step with the [Super Learner](https://www.degruyter.com/document/doi/10.2202/1544-6115.1309/html).
 
 The preprint will be put on bioRxiv soon and is available upon request. Please contact Jin Jin (Jin.Jin@Pennmedicine.upenn.edu) for details.
 
 ## Installation & Data Preparation
 
-- Download the source files from https://github.com/Jin93/MEBayesSL/. From now on we call the folder /MEBayesSL/ for simplicity.
+- Download the source files from https://github.com/Jin93/MUSSEL/. From now on we call the folder /MUSSEL/ for simplicity.
 
-- Download the ref_bim.txt from [this link](https://www.dropbox.com/s/58uzwqewxv34wal/ref_bim.txt?dl=0) and save it under /MEBayesSL/.
+- Download the ref_bim.txt from [this link](https://www.dropbox.com/s/58uzwqewxv34wal/ref_bim.txt?dl=0) and save it under /MUSSEL/.
 
 - Download and decompress the LD reference data and save the decompressed folder as ${path_LDref}.
 
@@ -16,9 +16,9 @@ The LD reference data contains SNP information and LD estimates by LD block for 
 
 Two options for lD reference panel are provided: 1000 Genomes Project phase 3 samples, or UK Biobank samples, both under genome build 37 (GRCh37). Each reference data contains two folders: 
 
-(1) `./LD/`: raw LD reference genotype data, which are input files for estimating LD matrices in LDpred2 and for an intermediate step of summarizing LD information in ME-Bayes. Save the decompressed folders in ${path_ref}.
+(1) `./LD/`: raw LD reference genotype data, which are input files for estimating LD matrices in LDpred2 and for an intermediate step of summarizing LD information in MUSS. Save the decompressed folders in ${path_ref}.
 
-(2) `./raw/`: Precalculated LD matrices and SNP information by LD block, which are input files in ME-Bayes. Save the decompressed folders in ${path_LD}.
+(2) `./raw/`: Precalculated LD matrices and SNP information by LD block, which are input files in MUSS. Save the decompressed folders in ${path_LD}.
 
 #### 1. LD reference data constructed based on the 1000 Genomes Project phase 3 samples (498 EUR, 659 AFR, 347 AMR, 503 EAS, 487 SAS): 
 
@@ -54,24 +54,24 @@ install.packages(c('optparse','bigreadr','bigsnpr','bigparallelr', 'bigmemory','
 ```
 
 Note: there are several command lines that need to be customized by users:
-1. The command line "module load conda_R" in `LDpred2_jobs.R` and `MEBayes_jobs.R` may need to be modified.
-2. The command lines on lines 121 - 122 in `LDpred2_jobs.R` and lines 148 - 149 in `MEBayes_jobs.R`: "qsub -cwd -l mem_free=23G,h_vmem=23G,h_fsize=100g", may need to be modified. Note: the memory required for MEBayes_jobs.R should be customized according to the number of training ancestry groups.
+1. The command line "module load conda_R" in `LDpred2_jobs.R` and `MUSS_jobs.R` may need to be modified.
+2. The command lines on lines 121 - 122 in `LDpred2_jobs.R` and lines 148 - 149 in `MUSS_jobs.R`: "qsub -cwd -l mem_free=23G,h_vmem=23G,h_fsize=100g", may need to be modified. Note: the memory required for MUSS_jobs.R should be customized according to the number of training ancestry groups.
 
 
-## MEBayesSL Manual
+## MUSSEL Manual
 
-MEBayesSL workflow: 
+MUSSEL workflow: 
 <p align="center">
 <img
-  src="/img/MEBayesSL_Workflow.png"
-  title="ME-Bayes SL Workflow"
+  src="/img/MUSSEL_Workflow.png"
+  title="MUSSEL Workflow"
   width=85% 
   height=85%>
 </p>
 
 ### [Step 0] 
 
-Obtain tuned causal SNP proportion  ($p_k, k=1,2,\ldots,K$) and heritability ($h^2_k, k=1,2,\ldots,K$) for each training ancestry group from LDpred2. These parameters will be used to specify the prior causal SNP proportions and heritability parameters in ME-Bayes.
+Obtain tuned causal SNP proportion  ($p_k, k=1,2,\ldots,K$) and heritability ($h^2_k, k=1,2,\ldots,K$) for each training ancestry group from LDpred2. These parameters will be used to specify the prior causal SNP proportions and heritability parameters in MUSS.
 
 LDpred2_jobs.R: submit LDpred2 jobs by chromosome.
 ```r
@@ -85,18 +85,18 @@ LDpred2_tuning.R --PATH_package --PATH_out --PATH_plink --FILE_sst --pop --chrom
 
 ### [Step 1] 
 
-ME-Bayes: a Bayesian model that jointly models the GWAS summary data across all training populations to obtain a total of $L \times K$ PRS models under L different tuning parameter settings for $Pr⁡(δ_{1j},…,δ_{Kj})$ (functions of $p_k$s) and $\rho_{k_1,k_2}$s across all K training populations.
+MUSS: a Bayesian model that jointly models the GWAS summary data across all training populations to obtain a total of $L \times K$ PRS models under L different tuning parameter settings for $Pr⁡(δ_{1j},…,δ_{Kj})$ (functions of $p_k$s) and $\rho_{k_1,k_2}$s across all K training populations.
 
 ```r
-MEBayes_jobs.R --PATH_package --PATH_data --PATH_LDref --PATH_out --FILE_sst --pop --LDpred2_params --chrom --bfile_tuning --NCORES
+MUSS_jobs.R --PATH_package --PATH_data --PATH_LDref --PATH_out --FILE_sst --pop --LDpred2_params --chrom --bfile_tuning --NCORES
 ```
 
 ### [Step 2] 
 
-For the target population, apply the super learning (SL) algorithm (default base learners: elastic net regression, ridge regression, and linear regression) to train an “optimal” linear combination of the ($L \times K$) PRS models, which we call the ME-Bayes SL PRS model, based on the tuning set of the target population. Optional: the prediction performance of the final ME-Bayes SL PRS model can be reported on an independent testing set, if the testing set is provided as an input.
+For the target population, apply the super learning (SL) algorithm (default base learners: elastic net regression, ridge regression, and linear regression) to train an “optimal” linear combination of the ($L \times K$) PRS models, which we call the MUSSEL PRS model, based on the tuning set of the target population. Optional: the prediction performance of the final MUSSEL PRS model can be reported on an independent testing set, if the testing set is provided as an input.
 
 ```r
-MEBayesSL.R --PATH_package --PATH_out --PATH_plink --FILE_sst --pop --chrom --bfile_tuning --pheno_tuning --bfile_testing --pheno_testing --testing --NCORES
+MUSSEL.R --PATH_package --PATH_out --PATH_plink --FILE_sst --pop --chrom --bfile_tuning --pheno_tuning --bfile_testing --pheno_testing --testing --NCORES
 ```
 
 - PATH_package (required): path to the directory where the downloaded files (decompressed) are saved.
@@ -139,7 +139,7 @@ MEBayesSL.R --PATH_package --PATH_out --PATH_plink --FILE_sst --pop --chrom --bf
 
 - cleanup: cleanup temporary files or not. Default: T.
 
-- NCORES: how many cores to use. (Default: 13 for LDpred2_jobs.R, 5 for MEBayes_jobs.R, and 1 for LDpred2_tuning.R and MEBayesSL.R)
+- NCORES: how many cores to use. (Default: 13 for LDpred2_jobs.R, 5 for MUSS_jobs.R, and 1 for LDpred2_tuning.R and MUSSEL.R)
 
 - LDpred2_params (required): path to the directory where the tuned LDpred2 parameters (population-specific causal SNP proportions, heritability and whether or not a sparse model is used) are saved, separated by comma.
 
@@ -156,15 +156,15 @@ MEBayesSL.R --PATH_package --PATH_out --PATH_plink --FILE_sst --pop --chrom --bf
 
 
 ## Example
-Download [example data](https://www.dropbox.com/s/xxw3t17k66il3k5/example.tar.gz?dl=0), decompress it by `tar -zxvf example.tar.gz` and save the files under the directory ${path_example}. Download the 1000 Genomes reference data and save the decompressed files in ${path_LDref}. Create a new folder `path_out` (e.g., in this example, `/dcs04/nilanjan/data/jjin/mebayessl/test`) to save the output. Run the example code below with your own data directories and check if the results are consistent with the results here: [example results](https://www.dropbox.com/s/hjmqghn2jva0950/MEBayesSL_example_data_results.zip?dl=0).
+Download [example data](https://www.dropbox.com/s/xxw3t17k66il3k5/example.tar.gz?dl=0), decompress it by `tar -zxvf example.tar.gz` and save the files under the directory ${path_example}. Download the 1000 Genomes reference data and save the decompressed files in ${path_LDref}. Create a new folder `path_out` (e.g., in this example, `/dcs04/nilanjan/data/jjin/MUSSEL/test`) to save the output. Run the example code below with your own data directories and check if the results are consistent with the results here: [example results](https://www.dropbox.com/s/hjmqghn2jva0950/MUSSEL_example_data_results.zip?dl=0).
 
 ```r 
 module load conda_R
 
-package='/dcs04/nilanjan/data/jjin/MEBayesSL'
+package='/dcs04/nilanjan/data/jjin/MUSSEL'
 path_data='/dcs04/nilanjan/data/jjin/example'
 path_LDref='/dcs04/nilanjan/data/jjin/LD_1kg'
-path_out='/dcs04/nilanjan/data/jjin/mebayessl/test'
+path_out='/dcs04/nilanjan/data/jjin/MUSSEL/test'
 path_plink='/dcl01/chatterj/data/jin/software/plink2'
 target_pop='AFR'
 ```
@@ -209,10 +209,10 @@ Rscript ${package}/R/LDpred2_tuning.R \
 
 ```
 
-### Step 3: Run ME-Bayes by chromosome (by submitting 22 jobs simultaneously, each for one chromosome). In each job, the algorithm will run under different tuning parameter settings in parallel.
+### Step 3: Run MUSS by chromosome (by submitting 22 jobs simultaneously, each for one chromosome). In each job, the algorithm will run under different tuning parameter settings in parallel.
 
 ``` r
-Rscript ${package}/R/MEBayes_jobs.R \
+Rscript ${package}/R/MUSS_jobs.R \
 --PATH_package ${package} \
 --PATH_data ${path_data} \
 --PATH_LDref ${path_LDref} \
@@ -226,10 +226,10 @@ Rscript ${package}/R/MEBayes_jobs.R \
 
 ```
 
-### Step 4: Combine PRS models generated under different parameter settings with a Super Learner (SL) algorithm to obtain the final ensembled ME-Bayes SL PRS model. Here, with the testing dataset provided, the prediction $R^2$ of the final ME-Bayes SL PRS model is reported on the testing set.
+### Step 4: Combine PRS models generated under different parameter settings with a Super Learner (SL) algorithm to obtain the final ensembled MUSSEL PRS model. Here, with the testing dataset provided, the prediction $R^2$ of the final MUSSEL PRS model is reported on the testing set.
 
 ``` r
-Rscript ${package}/R/MEBayesSL.R \
+Rscript ${package}/R/MUSSEL.R \
 --PATH_package ${package} \
 --PATH_out ${path_out} \
 --PATH_plink ${path_plink} \
