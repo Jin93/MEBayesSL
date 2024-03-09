@@ -562,21 +562,7 @@ MUSS = function(ss, chain, n.burnin, niter, settings, r, r.sign,
     for (k in 1:K){
       h2[k] = H2[k]/(Mt[k]*p.causal[k])
     }
-    p.causal.common = 1 # settings[ss,'p.causal.common']
-    if (correlation_scale == 'original'){
-      for (cor.indx in 1:length(r)){
-        r.temp = numeric()
-        r.0 = r[cor.indx]
-        n.random = nrow(temp.scale[[cor.indx]])
-        for (random.seed in c(1:5)){
-          set.seed(random.seed)
-          X0 = mvrnorm(n=n.random, mu = c(0,0), Sigma = matrix(c(1,r.0,r.0,1),2,2))
-          X1 = cbind(X0[,1] * temp.scale[[cor.indx]][,1], X0[,2] * temp.scale[[cor.indx]][,2])
-          r.temp = c(r.temp,cor(X1)[2,1])
-        }
-        r[cor.indx] = mean(r.temp)
-      }
-    }
+    p.causal.common = 1
     rs12 = r[1] * r.sign$r12.sign; 
     rs13 = r[2] * r.sign$r13.sign; rs14 = r[3] * r.sign$r14.sign; rs15 = r[4] * r.sign$r15.sign;
     rs23 = r[5] * r.sign$r23.sign; rs24 = r[6] * r.sign$r24.sign; rs25 = r[7] * r.sign$r25.sign; 
