@@ -20,7 +20,22 @@ Two options for lD reference panel are provided: 1000 Genomes Project phase 3 sa
 
 (2) `./raw/`: Precalculated LD matrices and SNP information by LD block, which are input files in MUSS. Save the decompressed folders in ${path_LD}.
 
-#### 1. LD reference data constructed based on the 1000 Genomes Project phase 3 samples (498 EUR, 659 AFR, 347 AMR, 503 EAS, 487 SAS): 
+
+#### 1. (Recommended) LD reference data constructed based on UK Biobank samples (10,000 EUR, 4,585 AFR, 687 AMR, 1,010 EAS, 5,427 SAS):
+
+[EUR reference data](https://www.dropbox.com/scl/fi/09yd12dest1tqxkt8p8ch/EUR.zip?rlkey=774vb1e5d6hfnyucilx160cyo&dl=0) (~13.15G): `tar -zxvf EUR.tar.gz`
+
+[AFR reference data](https://www.dropbox.com/scl/fi/jfymih83anr2vuevmfqok/AFR.zip?rlkey=r1lxpn1fnbk98ssf8f8ji4xkk&dl=0) (~11.59G): `tar -zxvf AFR.tar.gz`
+
+[AMR reference data](https://www.dropbox.com/s/2ba4tsbhz03rg83/AMR.zip?dl=0) (~4.88G): `tar -zxvf AMR.tar.gz`
+
+[EAS reference data](https://www.dropbox.com/s/uofu788707dp4xv/EAS.zip?dl=0) (~4.27G): `tar -zxvf EAS.tar.gz`
+
+[SAS reference data](https://www.dropbox.com/scl/fi/o635c86ylthbl3omfetbu/SAS.zip?rlkey=ot396toxl0phaiae15cnpbeyn&dl=0) (~11.44G): `tar -zxvf SAS.tar.gz`
+
+Note: PRS trained using the larger UKBB LD reference data is usually more powerful than PRS trained using the 1000G reference data, especially with a sufficiently large discovery GWAS sample size (e.g., >100K).
+
+#### 2. LD reference data constructed based on the 1000 Genomes Project phase 3 samples (498 EUR, 659 AFR, 347 AMR, 503 EAS, 487 SAS): 
 
 [EUR reference data](https://www.dropbox.com/s/wvxh4yqthm8m7uf/EUR.zip?dl=0) (~6.73G): `tar -zxvf EUR.tar.gz`
 
@@ -32,18 +47,6 @@ Two options for lD reference panel are provided: 1000 Genomes Project phase 3 sa
 
 [SAS reference data](https://www.dropbox.com/s/idp02rgl8xv379b/SAS.zip?dl=0) (~2.60G): `tar -zxvf SAS.tar.gz`
 
-
-#### 2. LD reference data constructed based on UK Biobank samples (10,000 EUR, 4,585 AFR, 687 AMR, 1,010 EAS, 5,427 SAS):
-
-[EUR reference data](https://www.dropbox.com/scl/fi/09yd12dest1tqxkt8p8ch/EUR.zip?rlkey=774vb1e5d6hfnyucilx160cyo&dl=0) (~13.15G): `tar -zxvf EUR.tar.gz`
-
-[AFR reference data](https://www.dropbox.com/scl/fi/jfymih83anr2vuevmfqok/AFR.zip?rlkey=r1lxpn1fnbk98ssf8f8ji4xkk&dl=0) (~11.59G): `tar -zxvf AFR.tar.gz`
-
-[AMR reference data](https://www.dropbox.com/s/2ba4tsbhz03rg83/AMR.zip?dl=0) (~4.88G): `tar -zxvf AMR.tar.gz`
-
-[EAS reference data](https://www.dropbox.com/s/uofu788707dp4xv/EAS.zip?dl=0) (~4.27G): `tar -zxvf EAS.tar.gz`
-
-[SAS reference data](https://www.dropbox.com/scl/fi/o635c86ylthbl3omfetbu/SAS.zip?rlkey=ot396toxl0phaiae15cnpbeyn&dl=0) (~11.44G): `tar -zxvf SAS.tar.gz`
 
 
 - Launch R and install required libraries:
