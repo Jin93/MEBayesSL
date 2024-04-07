@@ -81,7 +81,7 @@ Please use the `example_data` in [Example](#example) as a reference to prepare  
 An example of the GWAS summary data format:
 ```
     rsid           chr     a1     a0     beta        beta_se      n_eff
-    rs3131972	  1	   G	  A	 -0.005679  0.006108  100000
+    rs3131972	  1	   G	  A	 -0.005679   0.006108    100000
     rs3131969	  1	   G	  A	    -0.006049	  0.006711  	100000
     rs1048488	  1        T	  C	    -0.007662	  0.006125  	100000
 ```
