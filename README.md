@@ -3,7 +3,7 @@
 MUSSEL is an R-based command line tool for implementing MUSSEL, a method for developing ancestry-specific polygenic risk score (PRS) that integrates information from GWAS summary statistics and external LD reference data from multiple populations (ancestry groups). MUSSEL infers SNP effect sizes via a Bayesian model with an induced prior correlation structure across populations followed by an ensemble learning step with the Super Learner. 
 
 Please refer to the [paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10120638/) or contact Jin Jin (Jin.Jin@Pennmedicine.upenn.edu) for details.
-&nbsp;
+</br>
 
 
 
@@ -11,7 +11,7 @@ Please refer to the [paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1012063
 - [ ] __April 8, 2024__ Updated source code, added more details regarding recommendation for LD reference panel.
 
 - [ ] __Feb 3, 2023__ First version of MUSSEL was made publicly available on Github.
-&nbsp;
+</br>
 
 
 ## Installation & Data Preparation
@@ -74,6 +74,7 @@ Note: there are several command lines that need to be customized by users becaus
 > 1. The command line, "module load conda_R" in `LDpred2_jobs.R` and `MUSS_jobs.R`, for loading R on server, may need to be modified.
 2. The command lines on lines 119 - 120 in `LDpred2_jobs.R` and lines 143 - 144 in `MUSS_jobs.R`, e.g., "sbatch --mem=23G", may need to be modified. Note: the memory required for MUSS_jobs.R should be customized according to the number of training ancestry groups. The default memory requirement in MUSS_jobs.R is for jointly modeling 5 ancestry groups. For modeling two ancestry groups, the memory requested can be set to about half of the default values.
 
+</br>
 
 ## MUSSEL Manual
 
@@ -108,7 +109,7 @@ MUSS: a Bayesian model that jointly models the GWAS summary data across all trai
 MUSS_jobs.R --PATH_package --PATH_data --PATH_LDref --PATH_out --FILE_sst --pop --LDpred2_params --chrom --bfile_tuning --NCORES
 ```
 
-### [Step 2] 
+### Step 2: MUSSEL
 
 For the target population, apply the super learning (SL) algorithm (default base learners: elastic net regression, ridge regression, and linear regression) to train an “optimal” linear combination of the ($L \times K$) PRS models, which we call the MUSSEL PRS model, based on the tuning set of the target population. Optional: the prediction performance of the final MUSSEL PRS model can be reported on an independent testing set, if the testing set is provided as an input.
 
@@ -170,7 +171,7 @@ MUSSEL.R --PATH_package --PATH_out --PATH_plink --FILE_sst --pop --chrom --bfile
 
 - target_pop (required): Target population (used to save output).
 
-
+</br>
 
 ## Example
 Download [example data](https://www.dropbox.com/s/xxw3t17k66il3k5/example.tar.gz?dl=0), decompress it by `tar -zxvf example.tar.gz` and save the files under the directory ${path_example}. Download the 1000 Genomes reference data and save the decompressed files in ${path_LDref}. Create a new folder `path_out` (e.g., in this example, `/dcs04/nilanjan/data/jjin/MUSSEL/test`) to save the output. Run the example code below with your own data directories and check if the results are consistent with the results here: [example results](https://www.dropbox.com/s/hjmqghn2jva0950/MUSSEL_example_data_results.zip?dl=0).
