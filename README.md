@@ -31,9 +31,9 @@ Please choose one of the two LD reference panels according to the training GWAS 
 `./raw/`: Precalculated LD matrices and SNP information by LD block, which are input files in MUSS.
 
 
-#### [1] UK Biobank LD reference data
+#### 1. UK Biobank LD reference data
 
-- Contains 10,000 EUR, 4,585 AFR, 687 AMR, 1,010 EAS, 5,427 SAS.
+- 10,000 EUR, 4,585 AFR, 687 AMR, 1,010 EAS, 5,427 SAS.
 - Recommended when training GWAS sample sizes are relatively large, e.g., N<sub>GWAS</sub> > 50K for at least two ancestry groups.
 
 [EUR reference data](https://www.dropbox.com/scl/fi/09yd12dest1tqxkt8p8ch/EUR.zip?rlkey=774vb1e5d6hfnyucilx160cyo&dl=0) (~13.15G): `tar -zxvf EUR.tar.gz`
@@ -48,9 +48,9 @@ Please choose one of the two LD reference panels according to the training GWAS 
 
 Note: PRS trained using the larger UKBB LD reference data is usually more powerful than PRS trained using the 1000G reference data, especially with a sufficiently large discovery GWAS sample size (e.g., >100K).
 
-#### [2] LD reference data constructed based on the 1000 Genomes Project phase 3 samples 
+#### 2. LD reference data constructed based on the 1000 Genomes Project phase 3 samples 
 
-- Contains 498 EUR, 659 AFR, 347 AMR, 503 EAS, 487 SAS.
+- 498 EUR, 659 AFR, 347 AMR, 503 EAS, 487 SAS.
 - Recommended when GWAS training sample sizes are relatively small, e.g., N<sub>GWAS</sub> < 50K for all ancestry groups.
 
 [EUR reference data](https://www.dropbox.com/s/wvxh4yqthm8m7uf/EUR.zip?dl=0) (~6.73G): `tar -zxvf EUR.tar.gz`
@@ -92,7 +92,7 @@ MUSSEL workflow:
   height=85%>
 </p>
 
-### Step 0 
+### * Step 0 
 
 Obtain the estimated causal SNP proportion ($p_k, k=1,2,\ldots,K$) and heritability ($h^2_k, k=1,2,\ldots,K$) parameters in LDpred2 for each training ancestry group. These parameters will be used to specify the prior causal SNP proportions and heritability parameters in [MUSS](#step-1:-muss).
 
