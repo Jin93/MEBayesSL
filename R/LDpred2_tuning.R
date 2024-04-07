@@ -103,7 +103,7 @@ source(paste0(opt$PATH_package,"/R/MEBayes-functions.R"))
 
 # First, check if LDpred2 outputs were saved for all chromosomes.
 
-outputstatus = sapply(1:K, function(x){sapply(1:22, function(y){file.exists(paste0(out_paths[x],'/tmp/beta_files/beta_in_all_settings_bychrom/ldpred2effect-chr',y,'.txt'))})})
+outputstatus = sapply(1:K, function(x){sapply(1:22, function(y){file.exists(paste0(out_paths[x],'/tmp/beta_files/beta_in_all_settings/ldpred2effect-chr',y,'.txt'))})})
 
 if (sum(outputstatus) < 44){
   rerun = which(rowSums(outputstatus) < 2)
@@ -132,7 +132,7 @@ if (sum(outputstatus) == 44){
     suppressWarnings(dir.create(paste0(out_path, "/tmp")))
     suppressWarnings(dir.create(paste0(out_path, "/tmp/ref_files")))
     suppressWarnings(dir.create(paste0(out_path, "/tmp/beta_files")))
-    suppressWarnings(dir.create(paste0(out_path, "/tmp/beta_files/beta_in_all_settings_bychrom")))
+    suppressWarnings(dir.create(paste0(out_path, "/tmp/beta_files/beta_in_all_settings")))
 
     ncpu <- NCORES #detectCores()
     cl <- makeCluster(ncpu)
@@ -140,15 +140,16 @@ if (sum(outputstatus) == 44){
     ## Combine all chromosomes
     score <- foreach(j = 1:length(chrs), .combine='rbind') %dopar% {
       chr <- chrs[j]
-      betas <- bigreadr::fread2(paste0(out_path,"/tmp/beta_files/beta_in_all_settings_bychrom/ldpred2effect-chr",chr,".txt"))
+      betas <- bigreadr::fread2(paste0(out_path,"/tmp/beta_files/beta_in_all_settings/ldpred2effects.txt"))
       return(betas)
     }
     # registerDoMC(1)
-    params <- bigreadr::fread2(paste0(out_path,"/tmp/beta_files/beta_in_all_settings_bychrom/params_chr",chrs[22],".txt")); nprs <- nrow(params)
+    params <- bigreadr::fread2(paste0(out_path,"/tmp/beta_files/beta_in_all_settings/params.txt")); nprs <- nrow(params)
     # params$sparsity <- apply(score[,-c(1:2)], MARGIN = 2, FUN = function (x){mean(x!=0)})
     tmp <- apply(score[,-c(1:2)], MARGIN=1, function(x){sum(x!=0)}); m <- !(tmp==0)
     score <- score[m,,drop=F]
-    colnames(score) <- c("rsid","a1",paste0("score",1:(ncol(score)-2)))
+    score <- score[,c(c('rsid', 'a0'),paste0('e',1:nrow(params)))]
+    colnames(score) <- c("rsid", "a0", paste0("score",1:(ncol(score)-2)))
     bigreadr::fwrite2(score, paste0(out_path,"/tmp/beta_files/beta_file.txt"), col.names = T, sep="\t")#, nThread=NCORES)
     bigreadr::fwrite2(params, paste0(out_path,"/tmp/beta_files/beta_params.txt"), col.names = T, sep="\t")#, nThread=NCORES)
     

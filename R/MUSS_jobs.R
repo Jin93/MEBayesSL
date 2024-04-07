@@ -118,7 +118,7 @@ for (chr in chrs){
   file.create(filen)
   zz <- file(filen, "w")
   cat("#$ -cwd", "", file = zz, sep = "\n")
-  cat(paste0('module load conda_R'), file = zz, sep = "\n")
+  cat(paste0('module load R'), file = zz, sep = "\n")
   cat("\n", file=zz)
   cat(paste0('#$ -o ',rscripts_path,'logfile'), file = zz, sep = "\n")
   cat(paste0('#$ -e ',rscripts_path,'logfile'), file = zz, sep = "\n")

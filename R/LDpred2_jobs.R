@@ -24,12 +24,9 @@ option_list = list(
               help="Paths followed by file names of the population-specific GWAS summary statistics, separated by comma [required] [required columns: chr, rsid, pos, a0, a1, beta, beta_se, n_eff]"),
   make_option("--pop", action="store", default=NA, type='character',
               help="Populations of the GWAS samples, separated by comma [required]"),
-  make_option("--chrom", action="store", default="1-22", type='character',
-              help="The chromosome on which the model is fitted, input in the format of 1-22 or 1,2,3 [required]"),
-  
-  make_option("--p", action="store", default=paste(signif(seq_log(1e-4, 1, length.out = 17), 2), collapse = ','), type='character',
+  make_option("--p", action="store", default=paste(signif(seq_log(1e-5, 1, length.out = 21), 2), collapse = ','), type='character',
               help="Candidate values for tuning parameter p (causal SNP proportion) [default: %default]"),
-  make_option("--H2", action="store", default=paste(c(0.7, 1, 1.4), collapse = ','), type='character',
+  make_option("--H2", action="store", default=paste(c(0.3, 0.7, 1, 1.4), collapse = ','), type='character',
               help="Candidate values for tuning parameter H2 (heritability = H2 * h2_est from LDSC) [default: %default]"),
   make_option("--sparse", action="store", default='0', type='character',
               help="Whether to consider a sparse model: 0, 1, or 0,1 [default: %default]"),
@@ -40,7 +37,7 @@ option_list = list(
               help="How much chatter to print: 0=nothing; 1=minimal; 2=all [default: %default]"),
   make_option("--cleanup", action="store", default=T, type="logical",
               help="Cleanup temporary files or not [default: %default]"),
-  make_option("--NCORES", action="store", default=13, type="integer",
+  make_option("--NCORES", action="store", default=12, type="integer",
               help="How many cores to use [default: %default]")
 )
 opt = parse_args(OptionParser(option_list=option_list))
@@ -51,9 +48,6 @@ suppressWarnings(dir.create(opt$PATH_out))
 
 races = str_split(opt$pop,",")[[1]]; K <- length(races)
 sumdata_paths = str_split(opt$FILE_sst,",")[[1]]
-
-opt$chrom <- gsub("-",":",opt$chrom)
-eval(parse(text=paste0("chrom = c(",opt$chrom,")")))
 
 bfile_tuning_vec <- str_split(opt$bfile_tuning,",")[[1]]
 
@@ -87,41 +81,34 @@ rscripts_path = paste0(opt$PATH_data, '/rscripts/')
 suppressWarnings(dir.create(rscripts_path))
 suppressWarnings(dir.create(paste0(rscripts_path,'logfile')))
 
-chrs = chrom
-for (chr in chrs){
-  filen<-paste0(rscripts_path, 'LDpred2_rscript_chr', chr, ".sh")
-  system(paste0('rm -rf ',filen))
-  file.create(filen)
-  zz <- file(filen, "w")
-  cat("#$ -cwd", "", file = zz, sep = "\n")
-  cat(paste0('module load conda_R'), file = zz, sep = "\n")
-  cat("\n", file=zz)
-  cat(paste0('#$ -o ',rscripts_path,'logfile'), file = zz, sep = "\n")
-  cat(paste0('#$ -e ',rscripts_path,'logfile'), file = zz, sep = "\n")
-  cat("\n", file=zz)
-  cat(paste0('Rscript ',opt$PATH_package,'/R/LDpred2.R '), file = zz, sep = " ")
-  cat(paste0(' --PATH_package ', opt$PATH_package), file = zz, sep = " ")
-  cat(paste0(' --PATH_ref ', opt$PATH_LDref), file = zz, sep = " ")
-  cat(paste0(' --PATH_out ', opt$PATH_out), file = zz, sep = " ")
-  cat(paste0(' --FILE_sst ', opt$FILE_sst), file = zz, sep = " ")
-  cat(paste0(' --pop ', opt$pop), file = zz, sep = " ")
-  cat(paste0(' --chrom ', chr), file = zz, sep = " ")
-  cat(paste0(' --p ', opt$p), file = zz, sep = " ")
-  cat(paste0(' --H2 ', opt$H2), file = zz, sep = " ")
-  cat(paste0(' --sparse ', opt$sparse), file = zz, sep = " ")
-  cat(paste0(' --bfile_tuning ', opt$bfile_tuning), file = zz, sep = " ")
-  cat(paste0(' --NCORES ', opt$NCORES), file = zz, sep = "\n")
-  cat("\n", file=zz)
-  cat(paste0('wait'), file = zz, sep = " ")
-}
+filen<-paste0(rscripts_path, 'LDpred2_rscript.sh')
+system(paste0('rm -rf ',filen))
+file.create(filen)
+zz <- file(filen, "w")
+cat("#$ -cwd", "", file = zz, sep = "\n")
+cat(paste0('module load R'), file = zz, sep = "\n")
+cat("\n", file=zz)
+cat(paste0('#$ -o ',rscripts_path,'logfile'), file = zz, sep = "\n")
+cat(paste0('#$ -e ',rscripts_path,'logfile'), file = zz, sep = "\n")
+cat("\n", file=zz)
+cat(paste0('Rscript ',opt$PATH_package,'/R/LDpred2.R '), file = zz, sep = " ")
+cat(paste0(' --PATH_package ', opt$PATH_package), file = zz, sep = " ")
+cat(paste0(' --PATH_ref ', opt$PATH_LDref), file = zz, sep = " ")
+cat(paste0(' --PATH_out ', opt$PATH_out), file = zz, sep = " ")
+cat(paste0(' --FILE_sst ', opt$FILE_sst), file = zz, sep = " ")
+cat(paste0(' --pop ', opt$pop), file = zz, sep = " ")
+cat(paste0(' --p ', opt$p), file = zz, sep = " ")
+cat(paste0(' --H2 ', opt$H2), file = zz, sep = " ")
+cat(paste0(' --sparse ', opt$sparse), file = zz, sep = " ")
+cat(paste0(' --bfile_tuning ', opt$bfile_tuning), file = zz, sep = " ")
+cat(paste0(' --NCORES ', opt$NCORES), file = zz, sep = "\n")
+cat("\n", file=zz)
+cat(paste0('wait'), file = zz, sep = " ")
 
-for (chr in chrs){
-  if ((chr >= 1)&(chr < 13)) system(paste0('sbatch --mem=23G ' ,rscripts_path, 'LDpred2_rscript_chr', chr, ".sh"))
-  if ((chr >= 13)&(chr < 23)) system(paste0('sbatch --mem=12G ' ,rscripts_path, 'LDpred2_rscript_chr', chr, ".sh"))
-}
+system(paste0('sbatch --mem=45G ' ,rscripts_path, 'LDpred2_rscript_chr', chr, ".sh"))
 
-print(paste0('R scripts submitted for running LDpred2 by chromosome in parallel.'))
+print(paste0('R scripts submitted for running LDpred2.'))
 
-cat(paste0('\n** Wait until all following files have been saved: **\n'))
-cat(paste0('\n** ', opt$PATH_out, '/{', paste(races,collapse = ','), '}', '/tmp/beta_files/beta_in_all_settings_bychrom/params_chr{1..22}.txt **\n'))
+cat(paste0('\n** Wait until the following files have been saved: **\n'))
+cat(paste0('\n** ', opt$PATH_out, '/{', paste(races,collapse = ','), '}', '/tmp/beta_files/beta_in_all_settings_bychrom/params.txt **\n'))
 cat(paste0('\n** Done. **\n'))
