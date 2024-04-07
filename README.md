@@ -8,8 +8,9 @@ Please refer to the [paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1012063
 
 
 ## Version History
-__April 8, 2024__ Updated source code, added more details regarding recommendation for LD reference panel.
-__Feb 3, 2023__ First version of MUSSEL was made publicly available on Github.
+- [ ] __April 8, 2024__ Updated source code, added more details regarding recommendation for LD reference panel.
+
+- [ ] __Feb 3, 2023__ First version of MUSSEL was made publicly available on Github.
 &nbsp;
 
 
