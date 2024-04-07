@@ -24,17 +24,17 @@ Please refer to the [paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1012063
 
 The LD reference data contains SNP information and LD estimates by LD block for genetic variants that are in the [HapMap3](https://www.broadinstitute.org/medical-and-population-genetics/hapmap-3) plus [MEGA Chip](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5156387/) list. Note: in some scenarios, the training GWAS sample for a population consists of multiple ancestry groups, in this case, ideally, a customized LD reference dataset should be created for this population with matched ancestral composition. The code for constructing such LD reference dataset can be requested (Jin.Jin@Pennmedicine.upenn.edu).
 
-Below we provide two options for the LD reference panel: 1000 Genomes Project phase 3 samples, or UK Biobank samples, both under genome build 37 (GRCh37). Each reference data contains two folders: 
+Please choose one of the two LD reference panels according to sample sizes of the training GWASs (please see detailed description for each LD panel). Each reference data contains two folders: 
 
-(1) `./LD/`: raw LD reference genotype data, which are input files for estimating LD matrices in LDpred2 and for an intermediate step of summarizing LD information in the [MUSS](#mussel-manual) step. Save the decompressed folders in ${path_ref}.
+(1) `./LD/`: raw LD reference genotype data (.bim, .bed,. fam), which are input files for estimating LD matrices in LDpred2 and for an intermediate step of summarizing LD information in the [MUSS](#mussel-manual) step.
 
-(2) `./raw/`: Precalculated LD matrices and SNP information by LD block, which are input files in MUSS. Save the decompressed folders in ${path_LD}.
+(2) `./raw/`: Precalculated LD matrices and SNP information by LD block, which are input files in MUSS.
 
 
-#### 1. LD reference data constructed based on UK Biobank samples (10,000 EUR, 4,585 AFR, 687 AMR, 1,010 EAS, 5,427 SAS):
+#### 1. UK Biobank LD reference data
 
-(Recommended when GWAS training sample sizes are relatively large, e.g., N<sub>GWAS</sub> > 50K for at least two ancestry groups.) 
- 
+> - LD reference data constructed based on UK Biobank samples: 10,000 EUR, 4,585 AFR, 687 AMR, 1,010 EAS, 5,427 SAS)
+> - Recommended when GWAS training sample sizes are relatively large, e.g., N<sub>GWAS</sub> > 50K for at least two ancestry groups.
 [EUR reference data](https://www.dropbox.com/scl/fi/09yd12dest1tqxkt8p8ch/EUR.zip?rlkey=774vb1e5d6hfnyucilx160cyo&dl=0) (~13.15G): `tar -zxvf EUR.tar.gz`
 
 [AFR reference data](https://www.dropbox.com/scl/fi/jfymih83anr2vuevmfqok/AFR.zip?rlkey=r1lxpn1fnbk98ssf8f8ji4xkk&dl=0) (~11.59G): `tar -zxvf AFR.tar.gz`
