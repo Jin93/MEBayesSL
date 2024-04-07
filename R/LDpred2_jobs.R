@@ -116,8 +116,8 @@ for (chr in chrs){
 }
 
 for (chr in chrs){
-  if ((chr >= 1)&(chr < 13)) system(paste0('qsub -cwd -l mem_free=23G,h_vmem=23G,h_fsize=100g ' ,rscripts_path, 'LDpred2_rscript_chr', chr, ".sh"))
-  if ((chr >= 13)&(chr < 23)) system(paste0('qsub -cwd -l mem_free=12G,h_vmem=12G,h_fsize=100g ' ,rscripts_path, 'LDpred2_rscript_chr', chr, ".sh"))
+  if ((chr >= 1)&(chr < 13)) system(paste0('sbatch --mem=23G ' ,rscripts_path, 'LDpred2_rscript_chr', chr, ".sh"))
+  if ((chr >= 13)&(chr < 23)) system(paste0('sbatch --mem=12G ' ,rscripts_path, 'LDpred2_rscript_chr', chr, ".sh"))
 }
 
 print(paste0('R scripts submitted for running LDpred2 by chromosome in parallel.'))

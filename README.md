@@ -1,28 +1,39 @@
 # MUSSEL
 
-MUSSEL is an R-based command line tool for implementing MUSSEL, a powerful method for developing ancestry-specific polygenic risk score (PRS) that integrates information from GWAS summary statistics and external LD reference data from multiple populations (ancestry groups). MUSSEL infers SNP effect sizes via a Bayesian model with an induced prior correlation structure across populations followed by an ensemble learning step with the [Super Learner](https://www.degruyter.com/document/doi/10.2202/1544-6115.1309/html).
+MUSSEL is an R-based command line tool for implementing MUSSEL, a method for developing ancestry-specific polygenic risk score (PRS) that integrates information from GWAS summary statistics and external LD reference data from multiple populations (ancestry groups). MUSSEL infers SNP effect sizes via a Bayesian model with an induced prior correlation structure across populations followed by an ensemble learning step with the Super Learner. 
 
-The preprint will be put on bioRxiv soon and is available upon request. Please contact Jin Jin (Jin.Jin@Pennmedicine.upenn.edu) for details.
+Please refer to the [paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10120638/) or contact Jin Jin (Jin.Jin@Pennmedicine.upenn.edu) for details.
+&nbsp;
+
+
+
+## Version History
+__April 8, 2024__ Updated source code, added more details regarding recommendation for LD reference panel.
+__Feb 3, 2023__ First version of MUSSEL was made publicly available on Github.
+&nbsp;
+
 
 ## Installation & Data Preparation
 
-- Download the source files from https://github.com/Jin93/MUSSEL/. From now on we call the folder /MUSSEL/ for simplicity.
+- Download or clone the Github repository by `git clone https://github.com/Jin93/MUSSEL.git`. From now on, we will refer to the folder as `/MUSSEL/` for simplicity.
 
-- Download the ref_bim.txt from [this link](https://www.dropbox.com/s/58uzwqewxv34wal/ref_bim.txt?dl=0) and save it under /MUSSEL/.
+- Download the `ref_bim.txt` from [this link](https://www.dropbox.com/s/58uzwqewxv34wal/ref_bim.txt?dl=0) and save it under `/MUSSEL/`.
 
-- Download and decompress the LD reference data and save the decompressed folder as ${path_LDref}.
+- Download and decompress the LD reference data and save the decompressed folders in ${path_LDref}.
 
-The LD reference data contains SNP information and LD estimates by LD block for genetic variants that are in the [HapMap3](https://www.broadinstitute.org/medical-and-population-genetics/hapmap-3) plus [MEGA Chip](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5156387/) list. Note: in some scenarios, the training GWAS sample for each population consists of multiple ancestry groups, and ideally a customized LD reference dataset should be created for each population with matched ancestral composition. Code for constructing such LD reference dataset can be requested (Jin.Jin@Pennmedicine.upenn.edu).
+The LD reference data contains SNP information and LD estimates by LD block for genetic variants that are in the [HapMap3](https://www.broadinstitute.org/medical-and-population-genetics/hapmap-3) plus [MEGA Chip](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5156387/) list. Note: in some scenarios, the training GWAS sample for a population consists of multiple ancestry groups, in this case, ideally, a customized LD reference dataset should be created for this population with matched ancestral composition. The code for constructing such LD reference dataset can be requested (Jin.Jin@Pennmedicine.upenn.edu).
 
-Two options for lD reference panel are provided: 1000 Genomes Project phase 3 samples, or UK Biobank samples, both under genome build 37 (GRCh37). Each reference data contains two folders: 
+Below we provide two options for the LD reference panel: 1000 Genomes Project phase 3 samples, or UK Biobank samples, both under genome build 37 (GRCh37). Each reference data contains two folders: 
 
-(1) `./LD/`: raw LD reference genotype data, which are input files for estimating LD matrices in LDpred2 and for an intermediate step of summarizing LD information in MUSS. Save the decompressed folders in ${path_ref}.
+(1) `./LD/`: raw LD reference genotype data, which are input files for estimating LD matrices in LDpred2 and for an intermediate step of summarizing LD information in the [MUSS](#mussel-manual) step. Save the decompressed folders in ${path_ref}.
 
 (2) `./raw/`: Precalculated LD matrices and SNP information by LD block, which are input files in MUSS. Save the decompressed folders in ${path_LD}.
 
 
-#### 1. (Recommended) LD reference data constructed based on UK Biobank samples (10,000 EUR, 4,585 AFR, 687 AMR, 1,010 EAS, 5,427 SAS):
+#### 1. LD reference data constructed based on UK Biobank samples (10,000 EUR, 4,585 AFR, 687 AMR, 1,010 EAS, 5,427 SAS):
 
+(Recommended when GWAS training sample sizes are relatively large, e.g., N<sub>GWAS</sub> > 50K for at least two ancestry groups.) 
+ 
 [EUR reference data](https://www.dropbox.com/scl/fi/09yd12dest1tqxkt8p8ch/EUR.zip?rlkey=774vb1e5d6hfnyucilx160cyo&dl=0) (~13.15G): `tar -zxvf EUR.tar.gz`
 
 [AFR reference data](https://www.dropbox.com/scl/fi/jfymih83anr2vuevmfqok/AFR.zip?rlkey=r1lxpn1fnbk98ssf8f8ji4xkk&dl=0) (~11.59G): `tar -zxvf AFR.tar.gz`
@@ -36,6 +47,8 @@ Two options for lD reference panel are provided: 1000 Genomes Project phase 3 sa
 Note: PRS trained using the larger UKBB LD reference data is usually more powerful than PRS trained using the 1000G reference data, especially with a sufficiently large discovery GWAS sample size (e.g., >100K).
 
 #### 2. LD reference data constructed based on the 1000 Genomes Project phase 3 samples (498 EUR, 659 AFR, 347 AMR, 503 EAS, 487 SAS): 
+
+(Recommended when GWAS training sample sizes are relatively small, e.g., N<sub>GWAS</sub> < 50K for all ancestry groups.)
 
 [EUR reference data](https://www.dropbox.com/s/wvxh4yqthm8m7uf/EUR.zip?dl=0) (~6.73G): `tar -zxvf EUR.tar.gz`
 
@@ -56,9 +69,9 @@ install.packages(c('optparse','bigreadr','bigsnpr','bigparallelr', 'bigmemory','
 'devtools','genio','dplyr','pryr','Matrix','lavaan','xtable','SuperLearner'))
 ```
 
-Note: there are several command lines that need to be customized by users:
-1. The command line "module load conda_R" in `LDpred2_jobs.R` and `MUSS_jobs.R` may need to be modified.
-2. The command lines on lines 121 - 122 in `LDpred2_jobs.R` and lines 148 - 149 in `MUSS_jobs.R`: "qsub -cwd -l mem_free=23G,h_vmem=23G,h_fsize=100g", may need to be modified. Note: the memory required for MUSS_jobs.R should be customized according to the number of training ancestry groups.
+Note: there are several command lines that need to be customized by users because of discrepancies in server:
+> 1. The command line, "module load conda_R" in `LDpred2_jobs.R` and `MUSS_jobs.R`, for loading R on server, may need to be modified.
+2. The command lines on lines 119 - 120 in `LDpred2_jobs.R` and lines 143 - 144 in `MUSS_jobs.R`, e.g., "sbatch --mem=23G", may need to be modified. Note: the memory required for MUSS_jobs.R should be customized according to the number of training ancestry groups. The default memory requirement in MUSS_jobs.R is for jointly modeling 5 ancestry groups. For modeling two ancestry groups, the memory requested can be set to about half of the default values.
 
 
 ## MUSSEL Manual
@@ -72,9 +85,9 @@ MUSSEL workflow:
   height=85%>
 </p>
 
-### [Step 0] 
+### Step 0 
 
-Obtain tuned causal SNP proportion  ($p_k, k=1,2,\ldots,K$) and heritability ($h^2_k, k=1,2,\ldots,K$) for each training ancestry group from LDpred2. These parameters will be used to specify the prior causal SNP proportions and heritability parameters in MUSS.
+Obtain the estimated causal SNP proportion ($p_k, k=1,2,\ldots,K$) and heritability ($h^2_k, k=1,2,\ldots,K$) parameters in LDpred2 for each training ancestry group. These parameters will be used to specify the prior causal SNP proportions and heritability parameters in [MUSS](#step-1:-muss).
 
 LDpred2_jobs.R: submit LDpred2 jobs by chromosome.
 ```r
@@ -86,7 +99,7 @@ LDpred2_tuning.R: obtain tuned LDpred2 parameters.
 LDpred2_tuning.R --PATH_package --PATH_out --PATH_plink --FILE_sst --pop --chrom 1-22 --bfile_tuning --pheno_tuning --bfile_testing --pheno_testing --testing --NCORES
 ```
 
-### [Step 1] 
+### Step 1: MUSS
 
 MUSS: a Bayesian model that jointly models the GWAS summary data across all training populations to obtain a total of $L \times K$ PRS models under L different tuning parameter settings for $Pr⁡(δ_{1j},…,δ_{Kj})$ (functions of $p_k$s) and $\rho_{k_1,k_2}$s across all K training populations.
 
@@ -251,4 +264,10 @@ Rscript ${package}/R/MUSSEL.R \
 ## Questions
 
 Please report any issues on the Issues page, I will respond as soon as possible. For a quicker response, please contact Jin.Jin@Pennmedicine.upenn.edu.
+
+
+## Citation
+
+Jin, Jin, et al. "MUSSEL: enhanced Bayesian polygenic risk prediction leveraging information across multiple ancestry groups". bioRxiv. [Preprint](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10120638/)
+
 

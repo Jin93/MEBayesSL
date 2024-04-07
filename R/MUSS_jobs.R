@@ -140,8 +140,8 @@ for (chr in chrs){
 }
 
 for (chr in chrs){
-  if ((chr >= 1)&(chr < 13)) system(paste0('qsub -cwd -l mem_free=35G,h_vmem=35G,h_fsize=100g ' ,rscripts_path, 'MUSS_rscript_chr', chr, ".sh"))
-  if ((chr >= 13)&(chr < 23)) system(paste0('qsub -cwd -l mem_free=19G,h_vmem=19G,h_fsize=100g ' ,rscripts_path, 'MUSS_rscript_chr', chr, ".sh"))
+  if ((chr >= 1)&(chr < 13)) system(paste0('sbatch --mem=35G ' ,rscripts_path, 'MUSS_rscript_chr', chr, ".sh"))
+  if ((chr >= 13)&(chr < 23)) system(paste0('sbatch --mem=19G ' ,rscripts_path, 'MUSS_rscript_chr', chr, ".sh"))
 }
 
 print(paste0('R scripts submitted for running MUSS by chromosome in parallel.'))
