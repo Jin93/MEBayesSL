@@ -24,17 +24,18 @@ Please refer to the [paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1012063
 
 The LD reference data contains SNP information and LD estimates by LD block for genetic variants that are in the [HapMap3](https://www.broadinstitute.org/medical-and-population-genetics/hapmap-3) plus [MEGA Chip](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5156387/) list. Note: in some scenarios, the training GWAS sample for a population consists of multiple ancestry groups, in this case, ideally, a customized LD reference dataset should be created for this population with matched ancestral composition. The code for constructing such LD reference dataset can be requested (Jin.Jin@Pennmedicine.upenn.edu).
 
-Please choose one of the two LD reference panels according to sample sizes of the training GWASs (please see detailed description for each LD panel). Each reference data contains two folders: 
+Please choose one of the two LD reference panels according to the training GWAS sample sizes (please see detailed description for each LD panel). Each reference data contains two folders: 
 
-(1) `./LD/`: raw LD reference genotype data (.bim, .bed,. fam), which are input files for estimating LD matrices in LDpred2 and for an intermediate step of summarizing LD information in the [MUSS](#mussel-manual) step.
+`./LD/`: raw LD reference genotype data (.bim, .bed,. fam), which are input files for estimating LD matrices in LDpred2 and for an intermediate step of summarizing LD information in the [MUSS](#mussel-manual) step.
 
-(2) `./raw/`: Precalculated LD matrices and SNP information by LD block, which are input files in MUSS.
+`./raw/`: Precalculated LD matrices and SNP information by LD block, which are input files in MUSS.
 
 
-#### 1. UK Biobank LD reference data
+#### [1] UK Biobank LD reference data
 
-> - LD reference data constructed based on UK Biobank samples: 10,000 EUR, 4,585 AFR, 687 AMR, 1,010 EAS, 5,427 SAS)
-> - Recommended when GWAS training sample sizes are relatively large, e.g., N<sub>GWAS</sub> > 50K for at least two ancestry groups.
+- Contains 10,000 EUR, 4,585 AFR, 687 AMR, 1,010 EAS, 5,427 SAS.
+- Recommended when training GWAS sample sizes are relatively large, e.g., N<sub>GWAS</sub> > 50K for at least two ancestry groups.
+
 [EUR reference data](https://www.dropbox.com/scl/fi/09yd12dest1tqxkt8p8ch/EUR.zip?rlkey=774vb1e5d6hfnyucilx160cyo&dl=0) (~13.15G): `tar -zxvf EUR.tar.gz`
 
 [AFR reference data](https://www.dropbox.com/scl/fi/jfymih83anr2vuevmfqok/AFR.zip?rlkey=r1lxpn1fnbk98ssf8f8ji4xkk&dl=0) (~11.59G): `tar -zxvf AFR.tar.gz`
@@ -47,9 +48,10 @@ Please choose one of the two LD reference panels according to sample sizes of th
 
 Note: PRS trained using the larger UKBB LD reference data is usually more powerful than PRS trained using the 1000G reference data, especially with a sufficiently large discovery GWAS sample size (e.g., >100K).
 
-#### 2. LD reference data constructed based on the 1000 Genomes Project phase 3 samples (498 EUR, 659 AFR, 347 AMR, 503 EAS, 487 SAS): 
+#### [2] LD reference data constructed based on the 1000 Genomes Project phase 3 samples 
 
-(Recommended when GWAS training sample sizes are relatively small, e.g., N<sub>GWAS</sub> < 50K for all ancestry groups.)
+- Contains 498 EUR, 659 AFR, 347 AMR, 503 EAS, 487 SAS.
+- Recommended when GWAS training sample sizes are relatively small, e.g., N<sub>GWAS</sub> < 50K for all ancestry groups.
 
 [EUR reference data](https://www.dropbox.com/s/wvxh4yqthm8m7uf/EUR.zip?dl=0) (~6.73G): `tar -zxvf EUR.tar.gz`
 
@@ -71,10 +73,13 @@ install.packages(c('optparse','bigreadr','bigsnpr','bigparallelr', 'bigmemory','
 ```
 
 Note: there are several command lines that need to be customized by users because of discrepancies in server:
-> 1. The command line, "module load conda_R" in `LDpred2_jobs.R` and `MUSS_jobs.R`, for loading R on server, may need to be modified.
+
+1. The command line, "module load conda_R" in `LDpred2_jobs.R` and `MUSS_jobs.R`, for loading R on server, may need to be modified.
+
 2. The command lines on lines 119 - 120 in `LDpred2_jobs.R` and lines 143 - 144 in `MUSS_jobs.R`, e.g., "sbatch --mem=23G", may need to be modified. Note: the memory required for MUSS_jobs.R should be customized according to the number of training ancestry groups. The default memory requirement in MUSS_jobs.R is for jointly modeling 5 ancestry groups. For modeling two ancestry groups, the memory requested can be set to about half of the default values.
 
 </br>
+
 
 ## MUSSEL Manual
 
