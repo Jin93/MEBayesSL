@@ -77,16 +77,22 @@ covar_testing_vec <- str_split(opt$covar_testing,",")[[1]]
 files <- NULL
 files <- c(files, sumdata_paths)
 for(mmm in 1:K){ files <- c(files, paste(bfile_tuning_vec[mmm],c(".bed",".bim",".fam"),sep='')) }
-suppressWarnings(if ( !is.na(pheno_tuning_vec) ) { files <- c(files, pheno_tuning_vec) })
-suppressWarnings(if ( !is.na(covar_tuning_vec) ) { files <- c(files, covar_tuning_vec) })
+n.pheno_tuning_vec = length(pheno_tuning_vec)
+n.covar_tuning_vec = length(covar_tuning_vec)
+suppressWarnings(if ( n.pheno_tuning_vec == K ) { files <- c(files, pheno_tuning_vec) })
+suppressWarnings(if ( n.covar_tuning_vec == K ) { files <- c(files, covar_tuning_vec) })
 if(opt$testing){
   if(is.na(bfile_testing_vec)[1]){
     cat( "ERROR: Please provide testing bfile\n" , sep='', file=stderr() )
     q()
   }
   for(mmm in 1:K){ files <- c(files, paste(bfile_testing_vec[mmm],c(".bed",".bim",".fam"),sep='')) }
-  suppressWarnings(if ( !is.na(pheno_testing_vec) ) { files <- c(files, pheno_testing_vec) })
-  suppressWarnings(if ( !is.na(covar_testing_vec) ) { files <- c(files, covar_testing_vec) })
+  n.pheno_testing_vec = length(pheno_testing_vec)
+  n.covar_testing_vec = length(covar_testing_vec)
+  suppressWarnings(if ( n.pheno_testing_vec == K ) { files <- c(files, pheno_testing_vec) })
+  suppressWarnings(if ( n.covar_testing_vec == K ) { files <- c(files, covar_testing_vec) })
+  # suppressWarnings(if ( !is.na(pheno_testing_vec) ) { files <- c(files, pheno_testing_vec) })
+  # suppressWarnings(if ( !is.na(covar_testing_vec) ) { files <- c(files, covar_testing_vec) })
 }
 
 for ( f in files ) {
@@ -98,20 +104,32 @@ for ( f in files ) {
 rm(list="files")
 
 
-source(paste0(opt$PATH_package,"/R/MEBayes-functions.R"))
+source(paste0(opt$PATH_package,"/R/source-functions.R"))
 
 
 # First, check if LDpred2 outputs were saved for all chromosomes.
 
-outputstatus = sapply(1:K, function(x){sapply(1:22, function(y){file.exists(paste0(out_paths[x],'/tmp/beta_files/beta_in_all_settings/ldpred2effect-chr',y,'.txt'))})})
+outputstatus = sapply(1:K, function(x){sapply(1:22, function(y){file.exists(paste0(out_paths[x],'/tmp/beta_files/beta_in_all_settings/ldpred2effects.txt'))})})
 
-if (sum(outputstatus) < 44){
+if (sum(outputstatus) < (K * 22)){
+  rownames(outputstatus) = 1:22
+  colnames(outputstatus) = races
+  rerun = list()
+  RERUN = character()
+  for (race in races){
+    rerun[[race]] = NULL
+    for (chromo in 1:22) {
+      if (!outputstatus[chromo, race]) rerun[[race]] = c(rerun[[race]], chromo)
+    }
+    if (!is.null(rerun[[race]])) RERUN[race] = paste0(race,': CHR=', paste0(rerun[[race]], collapse = ','))
+  }
   rerun = which(rowSums(outputstatus) < 2)
-  cat(paste0('\n** Terminated: need to rerun LDpred2 the following chromosomes: ', paste(rerun, collapse = ','), ' first. **\n'))
+  
+  cat(paste0('\n** Terminated: need to rerun LDpred2 for: ', paste0(RERUN, collapse='; '), '. **\n'))
   cat(paste0('\n** Rerun LDpred2_jobs.R with --chrom ', paste(rerun, collapse = ','), ' **\n'))
 }
 
-if (sum(outputstatus) == 44){
+if (sum(outputstatus) == (K * 22)){
   
   unregister_dopar()
   
@@ -135,18 +153,19 @@ if (sum(outputstatus) == 44){
     suppressWarnings(dir.create(paste0(out_path, "/tmp/beta_files/beta_in_all_settings")))
 
     ncpu <- NCORES #detectCores()
-    cl <- makeCluster(ncpu)
-    registerDoMC(ncpu)
+    # cl <- makeCluster(ncpu)
+    # registerDoMC(ncpu)
     ## Combine all chromosomes
-    score <- foreach(j = 1:length(chrs), .combine='rbind') %dopar% {
-      chr <- chrs[j]
-      betas <- bigreadr::fread2(paste0(out_path,"/tmp/beta_files/beta_in_all_settings/ldpred2effects.txt"))
-      return(betas)
-    }
+    # score <- foreach(j = 1:length(chrs), .combine='rbind') %dopar% {
+    #   chr <- chrs[j]
+    #   betas <- bigreadr::fread2(paste0(out_path,"/tmp/beta_files/beta_in_all_settings/ldpred2effects.txt"))
+    #   return(betas)
+    # }
+    score <- bigreadr::fread2(paste0(out_path,"/tmp/beta_files/beta_in_all_settings/ldpred2effects.txt"))
     # registerDoMC(1)
     params <- bigreadr::fread2(paste0(out_path,"/tmp/beta_files/beta_in_all_settings/params.txt")); nprs <- nrow(params)
     # params$sparsity <- apply(score[,-c(1:2)], MARGIN = 2, FUN = function (x){mean(x!=0)})
-    tmp <- apply(score[,-c(1:2)], MARGIN=1, function(x){sum(x!=0)}); m <- !(tmp==0)
+    tmp <- apply(score[,-c(1:4)], MARGIN=1, function(x){sum(x!=0)}); m <- !(tmp==0)
     score <- score[m,,drop=F]
     score <- score[,c(c('rsid', 'a0'),paste0('e',1:nrow(params)))]
     colnames(score) <- c("rsid", "a0", paste0("score",1:(ncol(score)-2)))
@@ -221,6 +240,7 @@ if (sum(outputstatus) == 44){
     ############
     ## Step 3.3. Find optimal tuning parameters
     
+    suppressWarnings(dir.create(paste0(opt$PATH_out, "/LDpred2/")))
     set.seed(1)
     
     R2 <- numeric(length = ncol(SCORE))
@@ -235,20 +255,20 @@ if (sum(outputstatus) == 44){
     h20 <- params$h2[indx]
     sparse0 <- params$sparse[indx]
     optim_params <- data.frame(p0 = p0, h20 = h20, sparse0 = sparse0)
-    bigreadr::fwrite2(optim_params, paste0(out_path,"/optim_params.txt"), col.names = T, sep="\t")#, nThread=NCORES)
+    bigreadr::fwrite2(optim_params, paste0(opt$PATH_out, '/LDpred2/', race, "_optim_params.txt"), col.names = T, sep="\t")#, nThread=NCORES)
     
     # Get tuning R2
     R2_res <- data.frame(tuning_R2=R2[indx])
-    bigreadr::fwrite2(R2_res, paste0(out_path,"/LDpred2_best_R2_tuning.txt"), col.names = T, sep="\t")#, nThread=NCORES)
-    if ( opt$verbose >= 1 ) cat(paste0(race," LDpred2 optimal tuning parameters saved in ", out_path,"/optimal_param.txt \n"))
+    bigreadr::fwrite2(R2_res, paste0(opt$PATH_out, '/LDpred2/', race, "_LDpred2_best_R2_tuning.txt"), col.names = T, sep="\t")#, nThread=NCORES)
+    if ( opt$verbose >= 1 ) cat(paste0(race," LDpred2 optimal tuning parameters saved in ", opt$PATH_out, '/LDpred2/', race, "_optimal_param.txt \n"))
     
     # Save estimated SNP effect sizes from LDpred2
     best_score <- score[,c(1,2,indx+2)]
     colnames(best_score)[3] <- "weight"
     best_score <- best_score[best_score$weight!=0,]
-    bigreadr::fwrite2(best_score, paste0(out_path,"/LDpred2_beta.txt"), col.names = T, sep="\t")#, nThread=NCORES)
-    if ( opt$verbose >= 1 ) cat(paste0("LDpred2 model is saved in ", out_path,"/LDpred2_beta.txt \n"))
-    if ( (opt$verbose >= 1) & !(opt$testing)) cat(paste0("***** Completed! R2 on tuning sample is saved in ", out_path,"/LDpred2_best_R2_tuning.txt *****\n"))
+    bigreadr::fwrite2(best_score, paste0(opt$PATH_out, '/LDpred2/', race, "_LDpred2_beta.txt"), col.names = T, sep="\t")#, nThread=NCORES)
+    if ( opt$verbose >= 1 ) cat(paste0("LDpred2 model is saved in ", opt$PATH_out, '/LDpred2/', race, "_LDpred2_beta.txt \n"))
+    if ( (opt$verbose >= 1) & !(opt$testing)) cat(paste0("***** Completed! R2 on tuning sample is saved in ", opt$PATH_out, '/LDpred2/', race, "_LDpred2_best_R2_tuning.txt *****\n"))
     
     
     ########################################################################
@@ -295,7 +315,7 @@ if (sum(outputstatus) == 44){
       ############
       ## Step 4.2. Calculate scores for all tuning parameter settings on tuning samples
       
-      arg <- paste0(opt$PATH_plink," --threads 1",#NCORES,
+      arg <- paste0(opt$PATH_plink," --threads 1 --silent",#NCORES,
                     " --bfile ", bfile_testing,
                     " --score ", out_path,"/LDpred2_beta.txt header-read",
                     " cols=+scoresums,-scoreavgs --score-col-nums 3",
@@ -315,8 +335,8 @@ if (sum(outputstatus) == 44){
       fit <- lm(pheno[,3]~SCORE[,5])
       R2 <- summary(fit)$r.square
       R2_res <- cbind(R2_res,data.frame(testing_R2=R2))
-      bigreadr::fwrite2(R2_res, paste0(out_path,"/LDpred_R2_testing.txt"), col.names = T, sep="\t")#, nThread=NCORES)
-      if ( opt$verbose >= 1 ) cat(paste0("** !COMPLETED! R2 is saved in ", out_path,"/LDpred_R2_testing.txt \n"))
+      bigreadr::fwrite2(R2_res, paste0(opt$PATH_out, '/LDpred2/', race, "_LDpred_R2_testing.txt"), col.names = T, sep="\t")#, nThread=NCORES)
+      if ( opt$verbose >= 1 ) cat(paste0("** !COMPLETED! R2 is saved in ", opt$PATH_out, '/LDpred2/', race, "_LDpred_R2_testing.txt \n"))
       
     }
     

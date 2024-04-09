@@ -278,7 +278,7 @@ tuning.params.setup = function(races, cors_additional){
   afr.indx = sapply(1:nrow(pair.indx), function(x){2 %in% pair.indx[x,]})
   rs.unequal[afr.indx] = cor_with_afr
   rs[[length(rs) + 1]] = rs.unequal
-  if (!is.na(cors_additional)) rs[(length(rs)+1):(length(rs)+length(cors_additional))] = cors_additional
+  if (sum(is.na(cors_additional)) == 0) rs[(length(rs)+1):(length(rs)+length(cors_additional))] = cors_additional
   return(list(rs = rs))
 }
 

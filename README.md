@@ -76,7 +76,7 @@ install.packages(c('optparse','bigreadr','bigsnpr','bigparallelr', 'bigmemory','
 
 - Prepare input data files:
 
-Please use the `example_data` in [Example](#example) as a reference to prepare  the input data files. Please note that the SNPs are matched across the training GWAS data, LD reference data, and validation data by RSID. If only the position information is available for SNPs in the training GWAS data and validation data, please impute the RSID (e.g., using LD reference data with the same genome build) before running the MUSSEL pipeline.
+Please use the `example_data` in [Example](#example) as a reference to prepare  the input data files. Please note that the SNPs are matched across the training GWAS data, LD reference data, and validation data by RSID.
 
 An example of the GWAS summary data format:
 ```
@@ -87,19 +87,20 @@ An example of the GWAS summary data format:
 ```
 The following columns are required for the GWAS summary data files:
 
- 1. rsid: SNP ID in the format of rsXXXX.
- 2. chr: chromosome, 1,2,...,22.
-beta: SNP effect. Note that for binary traits, beta is the coefficient in logistic regression, i.e. log(OR).
-beta_se: Standard error of beta.
-a1: effective allele (counted allele in regression).
-a0: alternative allele (non-A1 allele).
-n_eff: Sample size per variant. Note that for binary traits, it is effective sample sizes = 4 / (1 / N_control + 1 / N_case); and for continuous traits, it is simply the sample size.
-Note that the summary statistics files are suggested to be cleaned as follows before using:
+ 1. rsid: SNP ID, in the format of rsXXXX. If only the position information is available (in the training GWAS data and/or validation data), please impute rsid (e.g., using LD reference data with the same genome build).
+ 2. chr: shromosome, 1, 2, ..., or 22.
+ 3. beta: SNP effect. For binary traits, beta is the log of odds ratio (logOR) from logistic regressions.
+ 4. beta_se: standard error of beta.
+ 5. a1: effective (reference) allele (counted allele in regression), the allele which beta corresponds to.
+ 6. a0: other (alternative) allele. Note that sometimes it is referred to as "a2".
+ 7. n_eff: GWAS sample size by SNP. For binary traits, it is the effective sample sizes = 4 / (1 / N_control + 1 / N_case); and for continuous traits, it is the same as the total sample size.
 
-Keep variants in reference panels to avoid troubles caused by reading huge files. The rsid of variants in reference panels can be found in ref_bim.txt.
-Alleles are suggested to match to reference panels to avoid flipping strands. The alleles of variants in reference panels can be found in ref_bim.txt.
-For each population, remove variants whose allele frequencies are less than 1%. If your summary statistics does not contain information of population-specific allele frequencies, we recommanded to use that in 1000G, which can be found in ref_af.txt.
-Remove variants with small sample size (90% of median sample size per variant).
+Before running the MUSSEL pipeline, please consider applying the following quality control steps on the GWAS summary data files, if possible:
+
+ 1. Only keep the biallelic HapMap3 + MEGA SNPs (SNP IDs can be found in the second column of `ref_bim.txt`) to avoid troubles caused by reading huge files (e.g., > 8 million SNPs) in R.
+ 2. Remove SNPs with minor allele frequencies lower than 1% in all populations.
+ 3. Remove SNPs with small GWAS sample sizes (90% of median per SNP GWAS sample size).
+
 
 __Note:__ 
 
@@ -269,6 +270,7 @@ Rscript ${package}/R/LDpred2_tuning.R \
 --NCORES 1
 
 ```
+Note: the `pheno.fam` dataset contains phenotype information for both tuning and testing individuals.
 
 ### Step 3: Run MUSS by chromosome (by submitting 22 jobs simultaneously, each for one chromosome). In each job, the algorithm will run under different tuning parameter settings in parallel.
 
@@ -294,7 +296,6 @@ Rscript ${package}/R/MUSSEL.R \
 --PATH_package ${package} \
 --PATH_out ${path_out} \
 --PATH_plink ${path_plink} \
---FILE_sst ${path_data}/summdata/EUR.txt,${path_data}/summdata/AFR.txt \
 --pop EUR,AFR \
 --chrom 1-22 \
 --bfile_tuning ${path_data}/sample_data/EUR/tuning_geno,${path_data}/sample_data/AFR/tuning_geno \

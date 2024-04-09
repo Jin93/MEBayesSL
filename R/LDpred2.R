@@ -159,8 +159,8 @@ for(mmm in 1:K){
   set.seed(2023)
   beta_ldpred2 <- snp_ldpred2_grid(corr, df_beta, params, ncores = NCORES)
   beta_ldpred2[is.na(beta_ldpred2)] = 0; beta_ldpred2[abs(beta_ldpred2) > 5] = 0
-  rownames(beta_ldpred2) = df_beta$rsid
   beta_ldpred2 = data.frame(df_beta[,c('chr','rsid','a0','a1')], beta_ldpred2)
+  rownames(beta_ldpred2) = df_beta$rsid
   colnames(beta_ldpred2) = c('chr','rsid','a0','a1', paste0('e',1:nrow(params)))
   output_LDpred2 = paste0(out_path, '/tmp/beta_files/beta_in_all_settings/ldpred2effects.txt')
   # write_delim(beta_ldpred2,file = output_LDpred2, delim='\t')

@@ -93,16 +93,16 @@ covar_testing_vec <- str_split(opt$covar_testing,",")[[1]]
 
 files <- NULL
 for(mmm in 1:K){ files <- c(files, paste(bfile_tuning_vec[mmm],c(".bed",".bim",".fam"),sep='')) }
-suppressWarnings(if ( !is.na(pheno_tuning_vec) ) { files <- c(files, pheno_tuning_vec) })
-suppressWarnings(if ( !is.na(covar_tuning_vec) ) { files <- c(files, covar_tuning_vec) })
+suppressWarnings(if ( sum(is.na(pheno_tuning_vec)) == 0 ) { files <- c(files, pheno_tuning_vec) })
+suppressWarnings(if ( sum(is.na(covar_tuning_vec)) == 0 ) { files <- c(files, covar_tuning_vec) })
 if(opt$testing){
   if(is.na(bfile_testing_vec)[1]){
     cat( "ERROR: Please provide testing bfile\n" , sep='', file=stderr() )
     q()
   }
   for(mmm in 1:K){ files <- c(files, paste(bfile_testing_vec[mmm],c(".bed",".bim",".fam"),sep='')) }
-  suppressWarnings(if ( !is.na(pheno_testing_vec) ) { files <- c(files, pheno_testing_vec) })
-  suppressWarnings(if ( !is.na(covar_testing_vec) ) { files <- c(files, covar_testing_vec) })
+  suppressWarnings(if ( sum(is.na(pheno_testing_vec)) == 0 ) { files <- c(files, pheno_testing_vec) })
+  suppressWarnings(if ( sum(is.na(covar_testing_vec)) == 0 ) { files <- c(files, covar_testing_vec) })
 }
 
 for ( f in files ) {
@@ -118,18 +118,18 @@ source(paste0(opt$PATH_package,"/R/MUSS-functions.R"))
 
 
 # First, check if LDpred2 outputs were saved for all chromosomes.
-outputstatus = sapply(1:K, function(x){sapply(1:22, function(y){file.exists(paste0(opt$PATH_out,'/tmp/MUSS_beta_in_all_settings_bychrom/', races[x], '-chr', y,'.txt'))})})
+outputstatus = sapply(1:K, function(x){sapply(chrs, function(y){file.exists(paste0(opt$PATH_out,'/tmp/MUSS_beta_in_all_settings_bychrom/', races[x], '-chr', y,'.txt'))})})
 
-if (sum(outputstatus) < 44){
+if (sum(outputstatus) < K * length(chrs)){
   rerun = which(rowSums(outputstatus) < 2)
   cat(paste0('\n** Terminated: need to rerun MUSS for the following chromosomes: ', paste(rerun, collapse = ','), ' first. **\n'))
   cat(paste0('\n** Rerun MUSS_jobs.R with --chrom ', paste(rerun, collapse = ','), ' **\n'))
 }
 
-settings <- bigreadr::fread2(paste0(opt$PATH_out,'/tmp/MUSS_beta_in_all_settings_bychrom/settings_',chrs[22],".txt"));
+settings <- bigreadr::fread2(paste0(opt$PATH_out,'/tmp/MUSS_beta_in_all_settings_bychrom/settings_',chrs[length(chrs)],".txt"));
 
 ## Combine estimated SNP effect sizes across all chromosomes
-if (sum(outputstatus) == 44){
+if (sum(outputstatus) == K * length(chrs)){
   
   unregister_dopar()
   

@@ -57,7 +57,7 @@ option_list = list(
   make_option("--cors_additional", action="store", default=NA, type='character',
               help="Additional candidate values for tuning parameter: genetic correlation across ancestry groups, example: 3 groups with label 1,2,3, want to add two additional settings: cor_setting1(1,2),cor_setting1(1,3),cor_setting1(2,3);cor_setting2(1,2),cor_setting2(1,3),cor_setting2(2,3) [optional]"),
   make_option("--ps_additional", action="store", default=NA, type='character',
-              help="Typically not necessary. Additional candidate values for tuning parameter: ancestry-specific causal SNP proportions, example: 3 groups with label 1,2,3, want to add two additional settings: p1_setting1,p2_setting1,p3_setting1;p1_setting2,p2_setting2,p3_setting2 [optional]"),
+              help="Typically not necessary. Additional candidate values for tuning parameter: ancestry-specific causal SNP proportions, example: 3 groups with label 1,2,3, want to add two additional settings: p1_setting1,p2_setting1,p3_setting1,p1_setting2,p2_setting2,p3_setting2 [optional]"),
   
   make_option("--bfile_tuning", action="store", default=NA, type='character',
               help="Path to PLINK binary input file prefix (minus .bed/.bim/.fam) for tuning, save by chromosome [required]"),
@@ -117,6 +117,8 @@ for (chr in chrs){
   system(paste0('rm -rf ',filen))
   file.create(filen)
   zz <- file(filen, "w")
+  cat("#!/bin/bash", "", file = zz, sep = "\n")
+  cat("\n", file=zz)
   cat("#$ -cwd", "", file = zz, sep = "\n")
   cat(paste0('module load R'), file = zz, sep = "\n")
   cat("\n", file=zz)
@@ -131,8 +133,8 @@ for (chr in chrs){
   cat(paste0(' --pop ', opt$pop), file = zz, sep = " ")
   cat(paste0(' --LDpred2_params ', opt$LDpred2_params), file = zz, sep = " ")
   cat(paste0(' --chrom ', chr), file = zz, sep = " ")
-  cat(paste0(' --cors_additional ', opt$cors_additional), file = zz, sep = " ")
-  cat(paste0(' --ps_additional ', opt$ps_additional), file = zz, sep = " ")
+  if (!is.na(opt$cors_additional)) cat(paste0(' --cors_additional ', opt$cors_additional), file = zz, sep = " ")
+  if (!is.na(opt$ps_additional)) cat(paste0(' --ps_additional ', opt$ps_additional), file = zz, sep = " ")
   cat(paste0(' --bfile_tuning ', opt$bfile_tuning), file = zz, sep = " ")
   cat(paste0(' --NCORES ', opt$NCORES), file = zz, sep = "\n")
   cat("\n", file=zz)

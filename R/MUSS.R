@@ -82,19 +82,21 @@ for ( f in sumdata_paths ) {
   }
 }
 
-cors_additional = ps_additional = NA
-if (opt$cors_additiona != 'NA'){
+# cors_additional = ps_additional = NA
+if (!is.na(opt$cors_additional)){
   tem = strsplit(opt$cors_additional, split = ';')[[1]]
   cors_additional = lapply(1:2, function(x){as.numeric(strsplit(tem[[x]], split = ',')[[1]])})
   validinput = sum(sapply(1:length(cors_additional), function(x){length(cors_additional[[x]]) == (K * (K-1))/2}))
   if (validinput != length(cors_additional)) cat(paste0('Error: wrong input format for --cors_additional \n'))
 }
-if (opt$ps_additional != 'NA'){
+if (is.na(opt$cors_additional)) cors_additional = opt$cors_additional
+if (!is.na(opt$ps_additional)){
   tem = strsplit(opt$ps_additional, split = ';')[[1]]
   ps_additional = lapply(1:2, function(x){as.numeric(strsplit(tem[[x]], split = ',')[[1]])})
   validinput = sum(sapply(1:length(ps_additional), function(x){length(ps_additional[[x]]) == K}))
   if (validinput != length(ps_additional)) cat(paste0('Error: wrong input format for --ps_additional \n'))
 }
+if (is.na(opt$ps_additional)) ps_additional = opt$ps_additional
 
 suppressWarnings(dir.create(opt$PATH_out))
 suppressWarnings(dir.create(paste0(opt$PATH_out, "/tmp")))
@@ -353,7 +355,7 @@ if (sum(rs.dup) > 1) rs = rs[-duplicated(rs)]
 
 settings0 = expand.grid(r.indx = 1:length(rs))
 settings.p = as.data.frame(rbind(p_est, t(sapply(1:K, function(x){rep(p_est[x],K)}))))
-if (!is.na(ps_additional)){
+if (sum(is.na(ps_additional)) == 0){
   temp.p = matrix(unlist(ps_additional),byrow=T,ncol = K)
   colnames(temp.p) = colnames(settings.p)
   settings.p = rbind(settings.p, temp.p)
