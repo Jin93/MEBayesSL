@@ -43,7 +43,7 @@ option_list = list(
   make_option("--linear_score", action="store", default=T, type='logical',
               help="Whether the trained linear models will be saved. If not, only the Super Learner model will be saved. Note: some models in SL_library are non-linear. In this case, linear score file cannot be generated [default: %default]"),
   make_option("--target_pop", action="store", default=NA, type='character',
-              help="Target population (used to save output) [required]"),
+              help="Target population (used to save output),, separated by comma [required]"),
   
   make_option("--bfile_tuning", action="store", default=NA, type='character',
               help="Path to PLINK binary input file prefix (minus .bed/.bim/.fam) for tuning, save by chromosome [required]"),

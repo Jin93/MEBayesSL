@@ -226,7 +226,7 @@ path_data='/dcs04/nilanjan/data/jjin/example'
 path_LDref='/dcs04/nilanjan/data/jjin/LD_1kg'
 path_out='/dcs04/nilanjan/data/jjin/MUSSEL/test'
 path_plink='/dcl01/chatterj/data/jin/software/plink2'
-target_pop='AFR'
+target_pop='EUR,AFR'
 ```
 Note: load the R version for which the required R packages were installed, in this example, R Version 4.2.2 Patched (2023-03-01 r83924).
 
@@ -297,6 +297,7 @@ Rscript ${package}/R/MUSSEL.R \
 --PATH_out ${path_out} \
 --PATH_plink ${path_plink} \
 --pop EUR,AFR \
+--target_pop ${target_pop} \
 --chrom 1-22 \
 --bfile_tuning ${path_data}/sample_data/EUR/tuning_geno,${path_data}/sample_data/AFR/tuning_geno \
 --pheno_tuning ${path_data}/sample_data/EUR/pheno.fam,${path_data}/sample_data/AFR/pheno.fam \
