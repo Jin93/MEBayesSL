@@ -8,9 +8,9 @@ Please refer to the [paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1012063
 
 
 ## Version History
-- [ ] __April 9, 2024__ Updated source code to incorporate updates for the [LDpred2](https://privefl.github.io/bigsnpr/articles/LDpred2.html) pipeline: now LDpred2_jobs.R will only submit one job per ancestry to the server instead of 22 (by chromosome) in the previous version; added more details regarding recommendation for LD reference panel.
+- [ ] __April 9, 2024:__  Updated source code to incorporate updates for the [LDpred2](https://privefl.github.io/bigsnpr/articles/LDpred2.html) pipeline: now LDpred2_jobs.R will only submit one job per ancestry to the server instead of 22 (by chromosome) in the previous version; added more details regarding recommendation for LD reference panel.
 
-- [ ] __Feb 3, 2023__ First version of MUSSEL was made publicly available on Github.
+- [ ] __Feb 3, 2023:__  First version of MUSSEL was made publicly available on Github.
 </br>
 
 
