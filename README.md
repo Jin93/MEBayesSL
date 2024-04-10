@@ -106,8 +106,8 @@ __Note:__
 
 there are several command lines that need to be customized by users because of discrepancies in server:
 
-- The command line, "module load R" in `LDpred2_jobs.R` and `MUSS_jobs.R`, for loading R on server, may need to be modified (e.g., "module load conda_R", "module load R/4.3", etc.)
-- The command lines on lines 119 - 120 in `LDpred2_jobs.R` and lines 143 - 144 in `MUSS_jobs.R`, e.g., "sbatch --mem=23G", may need to be modified. Note: the memory required for MUSS_jobs.R should be customized according to the number of training ancestry groups. The default memory requirement in MUSS_jobs.R is for jointly modeling 5 ancestry groups. For modeling two ancestry groups, the memory requested can be set to about half of the default values.
+- The linux commands for submitting jobs on server (lines 88 - 94 and line 110: "sbatch --mem=30G" in `LDpred2_jobs.R`, and lines 120 - 126 and lines 145 - 146 (e.g., "sbatch --mem=35G"), in `MUSS_jobs.R`), may need to be modified according to the server used (e.g., "module load conda_R", "module load R/4.3", etc.).
+- For the commands in line 110 in `LDpred2_jobs.R`: "sbatch --mem=25G", the memory is required for running LDpred2 sequentially on two ancestry groups with NCORES=11 cores. If more ancestries are included, a larger memory (e.g., 40G for $K=5$) may need to requested (mainly for loading the LD information). Similarly, for the commands in lines 145 - 146 in `MUSS_jobs.R`: the required memory should be customized according to the number of training ancestry groups ($K$). The default memory requirement in MUSS_jobs.R is for jointly modeling 2 ancestry groups. For modeling more ancestry groups, the requested memory can be estimated as a linear function of $K$.
 
 
 </br>

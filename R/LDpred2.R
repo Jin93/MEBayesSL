@@ -143,7 +143,7 @@ for(mmm in 1:K){
       ld <- c(ld, Matrix::colSums(corr0^2))
       corr$add_columns(corr0, nrow(corr))
     }
-    print(paste0('Complete calculating LD for CHR ', chr))
+    print(paste0('Complete summarizing LD matrix info for CHR ', chr))
     rm(corr0)
   }
   rm(sum.raw, tun, ref_tmp, sumstats)
