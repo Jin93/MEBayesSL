@@ -326,6 +326,6 @@ Please report any issues on the Issues page, I will respond as soon as possible.
 
 ## Citation
 
-Jin, J., Zhan, J., Zhang, J., Zhao, R., O’Connell, J., Jiang, Y., Aslibekyan, S., Auton, A., Babalola, E., Bell, R.K., et al. (2024). MUSSEL: Enhanced Bayesian polygenic risk prediction leveraging information across multiple ancestry groups. Cell Genomics 4(4), 100539. [Link](https://www.cell.com/cell-genomics/fulltext/S2666-979X(24)00095-8#secsectitle0030)
+__Jin, J.__, Zhan, J., Zhang, J., Zhao, R., O’Connell, J., Jiang, Y., Aslibekyan, S., Auton, A., Babalola, E., Bell, R.K., et al. MUSSEL: Enhanced Bayesian polygenic risk prediction leveraging information across multiple ancestry groups. Cell Genomics 4(4), 100539, 2024. [Link](https://www.cell.com/cell-genomics/fulltext/S2666-979X(24)00095-8#secsectitle0030)
 
 
