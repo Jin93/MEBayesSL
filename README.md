@@ -263,14 +263,18 @@ Rscript ${package}/R/LDpred2_tuning.R \
 --pop EUR,AFR \
 --chrom 1-22 \
 --bfile_tuning ${path_data}/sample_data/EUR/tuning_geno,${path_data}/sample_data/AFR/tuning_geno \
---pheno_tuning ${path_data}/sample_data/EUR/pheno.fam,${path_data}/sample_data/AFR/pheno.fam \
+--pheno_tuning ${path_data}/sample_data/EUR/pheno.txt,${path_data}/sample_data/AFR/pheno.txt \
+--covar_tuning ${path_data}/sample_data/EUR/covar.txt,${path_data}/sample_data/AFR/covar.txt \
 --bfile_testing ${path_data}/sample_data/EUR/testing_geno,${path_data}/sample_data/AFR/testing_geno \
---pheno_testing ${path_data}/sample_data/EUR/pheno.fam,${path_data}/sample_data/AFR/pheno.fam \
+--pheno_testing ${path_data}/sample_data/EUR/pheno.txt,${path_data}/sample_data/AFR/pheno.txt \
+--covar_testing ${path_data}/sample_data/EUR/covar.txt,${path_data}/sample_data/AFR/covar.txt \
 --testing TRUE \
 --NCORES 1
 
 ```
-Note: the `pheno.fam` dataset contains phenotype information for both tuning and testing individuals.
+Note: 
+ 1. the `pheno.txt` dataset contains phenotype information for both tuning and testing individuals. 
+ 2. For continuous traits, instead of using the `--covar_tuning` and `--covar_testing` option to adjust for covariates, an alternative approach is to first regress the phenotype on covariates, then save the residual (adjusted phenotype data) in `pheno.txt`.
 
 ### Step 3: Run MUSS by chromosome (by submitting 22 jobs simultaneously, each for one chromosome). In each job, the algorithm will run under different tuning parameter settings in parallel.
 
@@ -300,9 +304,11 @@ Rscript ${package}/R/MUSSEL.R \
 --target_pop ${target_pop} \
 --chrom 1-22 \
 --bfile_tuning ${path_data}/sample_data/EUR/tuning_geno,${path_data}/sample_data/AFR/tuning_geno \
---pheno_tuning ${path_data}/sample_data/EUR/pheno.fam,${path_data}/sample_data/AFR/pheno.fam \
+--pheno_tuning ${path_data}/sample_data/EUR/pheno.txt,${path_data}/sample_data/AFR/pheno.txt \
+--covar_tuning ${path_data}/sample_data/EUR/covar.txt,${path_data}/sample_data/AFR/covar.txt \
 --bfile_testing ${path_data}/sample_data/EUR/testing_geno,${path_data}/sample_data/AFR/testing_geno \
---pheno_testing ${path_data}/sample_data/EUR/pheno.fam,${path_data}/sample_data/AFR/pheno.fam \
+--pheno_testing ${path_data}/sample_data/EUR/pheno.txt,${path_data}/sample_data/AFR/pheno.txt \
+--covar_testing ${path_data}/sample_data/EUR/covar.txt,${path_data}/sample_data/AFR/covar.txt \
 --testing TRUE \--NCORES 1
 
 ```
