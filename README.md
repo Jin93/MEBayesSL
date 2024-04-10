@@ -2,13 +2,13 @@
 
 MUSSEL is an R-based command line tool for implementing MUSSEL, a method for developing ancestry-specific polygenic risk score (PRS) that integrates information from GWAS summary statistics and external LD reference data from multiple populations (ancestry groups). MUSSEL infers SNP effect sizes via a Bayesian model with an induced prior correlation structure across populations followed by an ensemble learning step with the Super Learner. As intermediate products, LDpred2 PRS models trained separately on GWAS data for each population will also be generated.
 
-Please refer to the [paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10120638/) or contact Jin Jin (Jin.Jin@Pennmedicine.upenn.edu) for details.
+Please refer to the [paper](https://www.cell.com/cell-genomics/fulltext/S2666-979X(24)00095-8#secsectitle0030) or contact Jin Jin (Jin.Jin@Pennmedicine.upenn.edu) for details.
 </br>
 
 
 
 ## Version History
-- [ ] __April 9, 2024:__  Updated source code to incorporate updates for the [LDpred2](https://privefl.github.io/bigsnpr/articles/LDpred2.html) pipeline: now LDpred2_jobs.R will only submit one job per ancestry to the server instead of 22 (by chromosome) in the previous version; added more details regarding recommendation for LD reference panel.
+- [ ] __April 10, 2024:__  Updated MUSSEL to incorporate the most recent version of [LDpred2](https://privefl.github.io/bigsnpr/articles/LDpred2.html) (June 8, 2023 version): now LDpred2_jobs.R will only submit one job to the server instead of 22 (by chromosome) in the previous version; fixed bugs with covariate adjustment; now allow for calculating AUC of PRS for binary traits.
 
 - [ ] __Feb 3, 2023:__  The first version of MUSSEL was made available on Github.
 </br>
@@ -70,7 +70,7 @@ Note: PRS trained using the larger UKBB LD reference data is usually more powerf
 - Launch R and install required libraries:
 
 ``` r
-install.packages(c('optparse','bigreadr','bigsnpr','bigparallelr', 'bigmemory','stringr','caret','Rcpp', 'RcppArmadillo','RcppTN','inline','doMC','foreach','doParallel','data.table','readr','MASS','reshape','parallel',
+install.packages(c('RISCA','optparse','bigreadr','bigsnpr','bigparallelr', 'bigmemory','stringr','caret','Rcpp', 'RcppArmadillo','RcppTN','inline','doMC','foreach','doParallel','data.table','readr','MASS','reshape','parallel',
 'devtools','genio','dplyr','pryr','Matrix','lavaan','xtable','SuperLearner'))
 ```
 
@@ -188,6 +188,8 @@ MUSSEL.R --PATH_package --PATH_out --PATH_plink --FILE_sst --pop --chrom --bfile
 
 - testing (required): whether to perform testing in seperate dataset. Default: F.
 
+- trait_type (required): Type of phenotype, continuous or binary. Default: 'continuous'.
+
 - bfile_testing (optional): path to PLINK binary input file prefix (.bed/.bim/.fam) for testing, save by chromosome.
 
 - pheno_testing (optional): path to phenotype file (PLINK format) for testing.
@@ -216,7 +218,7 @@ MUSSEL.R --PATH_package --PATH_out --PATH_plink --FILE_sst --pop --chrom --bfile
 
 
 ## Example
-Download [example data](https://www.dropbox.com/s/xxw3t17k66il3k5/example.tar.gz?dl=0), decompress it by `tar -zxvf example.tar.gz` and save the files under the directory ${path_example}. Download the 1000 Genomes reference data and save the decompressed files in ${path_LDref}. Create a new folder `path_out` (e.g., in this example, `/dcs04/nilanjan/data/jjin/MUSSEL/test`) to save the output. Run the example code below with your own data directories and check if the results are consistent with the results here: [example results](https://www.dropbox.com/s/hjmqghn2jva0950/MUSSEL_example_data_results.zip?dl=0).
+Download [example data](https://www.dropbox.com/scl/fi/bne781g2qsq67p0r9y9cl/example.zip?rlkey=6aw5tnfpbnjc3ieq1ee4do2ay&dl=0), decompress it by `tar -zxvf example.tar.gz` and save the files under the directory ${path_example}. Download the 1000 Genomes reference data and save the decompressed files in ${path_LDref}. Create a new folder `path_out` (e.g., in this example, `/dcs04/nilanjan/data/jjin/MUSSEL/test`) to save the output. Run the example code below with your own data directories and check if the results/outputs (saved in ${path_out}) are consistent with the results/outputs here: [example results](https://www.dropbox.com/s/hjmqghn2jva0950/MUSSEL_example_data_results.zip?dl=0).
 
 ```r 
 module load R
@@ -227,6 +229,7 @@ path_LDref='/dcs04/nilanjan/data/jjin/LD_1kg'
 path_out='/dcs04/nilanjan/data/jjin/MUSSEL/test'
 path_plink='/dcl01/chatterj/data/jin/software/plink2'
 target_pop='EUR,AFR'
+trait_type = 'continuous'
 ```
 Note: load the R version for which the required R packages were installed, in this example, R Version 4.2.2 Patched (2023-03-01 r83924).
 
@@ -268,6 +271,7 @@ Rscript ${package}/R/LDpred2_tuning.R \
 --bfile_testing ${path_data}/sample_data/EUR/testing_geno,${path_data}/sample_data/AFR/testing_geno \
 --pheno_testing ${path_data}/sample_data/EUR/pheno.txt,${path_data}/sample_data/AFR/pheno.txt \
 --covar_testing ${path_data}/sample_data/EUR/covar.txt,${path_data}/sample_data/AFR/covar.txt \
+--trait_type ${trait_type} \
 --testing TRUE \
 --NCORES 1
 
@@ -286,7 +290,7 @@ Rscript ${package}/R/MUSS_jobs.R \
 --PATH_out ${path_out} \
 --FILE_sst ${path_data}/summdata/EUR.txt,${path_data}/summdata/AFR.txt \
 --pop EUR,AFR \
---LDpred2_params ${path_out}/EUR/optim_params.txt,${path_out}/AFR/optim_params.txt \
+--LDpred2_params ${path_out}/LDpred2/EUR_optim_params.txt,${path_out}/LDpred2/AFR_optim_params.txt \
 --chrom 1-22 \
 --bfile_tuning ${path_data}/sample_data/EUR/tuning_geno,${path_data}/sample_data/AFR/tuning_geno \
 --NCORES 5
@@ -309,6 +313,7 @@ Rscript ${package}/R/MUSSEL.R \
 --bfile_testing ${path_data}/sample_data/EUR/testing_geno,${path_data}/sample_data/AFR/testing_geno \
 --pheno_testing ${path_data}/sample_data/EUR/pheno.txt,${path_data}/sample_data/AFR/pheno.txt \
 --covar_testing ${path_data}/sample_data/EUR/covar.txt,${path_data}/sample_data/AFR/covar.txt \
+--trait_type ${trait_type} \
 --testing TRUE \--NCORES 1
 
 ```
@@ -321,6 +326,6 @@ Please report any issues on the Issues page, I will respond as soon as possible.
 
 ## Citation
 
-Jin, Jin, et al. "MUSSEL: enhanced Bayesian polygenic risk prediction leveraging information across multiple ancestry groups". bioRxiv. [Preprint](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10120638/)
+Jin, J., Zhan, J., Zhang, J., Zhao, R., O’Connell, J., Jiang, Y., Aslibekyan, S., Auton, A., Babalola, E., Bell, R.K., et al. (2024). MUSSEL: Enhanced Bayesian polygenic risk prediction leveraging information across multiple ancestry groups. Cell Genomics 4(4), 100539. [Link](https://www.cell.com/cell-genomics/fulltext/S2666-979X(24)00095-8#secsectitle0030)
 
 

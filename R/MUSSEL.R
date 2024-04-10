@@ -1,4 +1,5 @@
 rm(list=ls())
+suppressMessages(library(RISCA))
 suppressMessages(library(optparse))
 suppressMessages(library(bigreadr))
 suppressMessages(library(bigsnpr))
@@ -45,6 +46,8 @@ option_list = list(
   make_option("--target_pop", action="store", default=NA, type='character',
               help="Target population (used to save output), separated by comma [required]"),
   
+  make_option("--trait_type", action="store", default='continuous', type='character',
+              help="Type of phenotype, continuous or binary [required]"),
   make_option("--bfile_tuning", action="store", default=NA, type='character',
               help="Path to PLINK binary input file prefix (minus .bed/.bim/.fam) for tuning, save by chromosome [required]"),
   make_option("--pheno_tuning", action="store", default=NA, type='character',
@@ -81,6 +84,7 @@ opt$chrom <- gsub("-",":",opt$chrom)
 eval(parse(text=paste0("chrs = c(",opt$chrom,")")))
 path_plink=opt$PATH_plink
 
+trait_type <- opt$trait_type
 bfile_tuning_vec <- str_split(opt$bfile_tuning,",")[[1]]
 pheno_tuning_vec <- str_split(opt$pheno_tuning,",")[[1]]
 covar_tuning_vec <- str_split(opt$covar_tuning,",")[[1]]
@@ -235,7 +239,7 @@ for (mmm in 1:K.target){
   pheno_testing <- pheno_testing_vec[mmm]
   covar_testing <- covar_testing_vec[mmm]
   
-  suppressWarnings(dir.create(paste0(opt$PATH_out, "/MUSS/",target[mmm])))
+  # suppressWarnings(dir.create(paste0(opt$PATH_out, "/MUSS/",target[mmm])))
   
   if ( opt$verbose >= 1 ) cat("\n** Step 3. Calculate cross-ancestry PRS under all parameter settings for tuning samples **\n")
   
@@ -268,9 +272,11 @@ for (mmm in 1:K.target){
     fam <- fam[m.keep,]
     pheno <- pheno[m.keep,]
     covar <- covar[m[m.keep],]
-    reg <- summary(lm( pheno[,3] ~ as.matrix(covar[,3:ncol(covar)]) ))
-    if ( opt$verbose >= 1 ) cat( reg$r.sq , "variance in phenotype explained by covariates in tuning samples \n" )
-    pheno[,3] <- scale(reg$resid)
+    if (trait_type == 'continuous'){
+      reg <- summary(lm( pheno[,3] ~ as.matrix(covar[,3:ncol(covar)]) ))
+      if ( opt$verbose >= 1 ) cat( reg$r.sq , "variance in phenotype explained by covariates in tuning samples \n" )
+      pheno[,3] <- scale(reg$resid)
+    }
   }
   
   ############
@@ -335,11 +341,34 @@ for (mmm in 1:K.target){
   if ( opt$verbose == 2 ) cat(paste0("MUSSEL PRS for tuning samples saved in ", opt$PATH_out,"/tmp/PRS/after_ensemble_tuning_", target[mmm],".txt \n"))
   
   # Get tuning R2
-  fit <- lm(pheno[,3]~after_ensemble_tuning$ensemble_score)
-  R2 <- summary(fit)$r.square
-  R2_res <- data.frame(tuning_R2=R2)
-  fwrite2(R2_res, paste0(opt$PATH_out,"/MUSSEL/R2_", target[mmm],".txt"), col.names = T, sep="\t", nThread=NCORES)
-  
+  if (trait_type == 'continuous'){
+    fit <- lm(pheno[,3]~after_ensemble_tuning$ensemble_score)
+    R2 <- summary(fit)$r.square
+    R2_res <- data.frame(tuning_R2=R2)
+    fwrite2(R2_res, paste0(opt$PATH_out,"/MUSSEL/R2_", target[mmm],".txt"), col.names = T, sep="\t", nThread=NCORES)
+  }
+  if (trait_type == 'binary'){
+    if (!is.na(covar_tuning)){
+      n.covar = ncol(covar)-2
+      dat.temp = as.data.frame(cbind(pheno[,3], after_ensemble_tuning$ensemble_score, covar[,-(1:2)]))
+      colnames(dat.temp) = c('y', 'prs', paste0('covar',1:n.covar))
+      roc_obj = roc.binary(status = 'y',
+                           variable = 'prs',
+                           confounders = formula(paste0(paste('', paste(c(paste0('covar',1:n.covar)),collapse="+"), sep='~'))),
+                           data = dat.temp,
+                           precision=seq(0.05,0.95, by=0.05))
+    }
+    if (is.na(covar_tuning)){
+      dat.temp = as.data.frame(cbind(pheno[,3], after_ensemble_tuning$ensemble_score))
+      colnames(dat.temp) = c('y', 'prs')
+      roc_obj = roc.binary(status = 'y',
+                           variable = 'prs', confounders = '~1',
+                           data = dat.temp,
+                           precision=seq(0.05,0.95, by=0.05))
+    }
+    AUC <- roc_obj$auc
+    rm(roc_obj)
+  }
   rm(list=c("after_ensemble_tuning"))
   
   
@@ -407,9 +436,11 @@ for (mmm in 1:K.target){
       fam <- fam[m.keep,]
       pheno <- pheno[m.keep,]
       covar <- covar[m[m.keep],]
-      reg <- summary(lm( pheno[,3] ~ as.matrix(covar[,3:ncol(covar)]) ))
-      if ( opt$verbose >= 1 ) cat( reg$r.sq , "variance in phenotype explained by covariates in testing samples \n" )
-      pheno[,3] <- scale(reg$resid)
+      if (trait_type == 'continuous'){
+        reg <- summary(lm( pheno[,3] ~ as.matrix(covar[,3:ncol(covar)]) ))
+        if ( opt$verbose >= 1 ) cat( reg$r.sq , "variance in phenotype explained by covariates in testing samples \n" )
+        pheno[,3] <- scale(reg$resid)
+      }
     }
     
     ############
@@ -441,14 +472,37 @@ for (mmm in 1:K.target){
     if ( opt$verbose == 2 ) cat(paste0("Predicted PROSPER scores for testing samples is saved in ", opt$PATH_out,"/tmp/sample_scores_",opt$prefix,"/after_ensemble_testing_", target[mmm],".txt \n"))
     
     # Get testing R2
-    fit <- lm(pheno[,3]~after_ensemble_testing$ensemble_score)
-    R2 <- summary(fit)$r.square
-    R2_res <- cbind(R2_res,data.frame(testing_R2=R2))
-    
-    fwrite2(R2_res, paste0(opt$PATH_out,"/MUSSEL/R2_", target[mmm], ".txt"), col.names = T, sep="\t", nThread=NCORES)
-    
-    if ( opt$verbose >= 1 ) cat(paste0("** COMPLETED! MUSSEL R2 saved in ", opt$PATH_out,"/MUSSEL/R2_", target[mmm], ".txt \n"))
-    
+    if (trait_type == 'continuous'){
+      fit <- lm(pheno[,3]~after_ensemble_testing$ensemble_score)
+      R2 <- summary(fit)$r.square
+      R2_res <- cbind(R2_res,data.frame(testing_R2=R2))
+      fwrite2(R2_res, paste0(opt$PATH_out,"/MUSSEL/R2_", target[mmm], ".txt"), col.names = T, sep="\t", nThread=NCORES)
+      if ( opt$verbose >= 1 ) cat(paste0("** COMPLETED! MUSSEL R2 saved in ", opt$PATH_out,"/MUSSEL/R2_", target[mmm], ".txt \n"))
+    }
+    if (trait_type == 'binary'){
+      if (!is.na(covar_tuning)){
+        n.covar = ncol(covar)-2
+        dat.temp = as.data.frame(cbind(pheno[,3], after_ensemble_testing$ensemble_score, covar[,-(1:2)]))
+        colnames(dat.temp) = c('y', 'prs', paste0('covar',1:n.covar))
+        roc_obj = roc.binary(status = 'y',
+                             variable = 'prs',
+                             confounders = formula(paste0(paste('', paste(c(paste0('covar',1:n.covar)),collapse="+"), sep='~'))),
+                             data = dat.temp,
+                             precision=seq(0.05,0.95, by=0.05))
+      }
+      if (is.na(covar_tuning)){
+        dat.temp = as.data.frame(cbind(pheno[,3], after_ensemble_testing$ensemble_score))
+        colnames(dat.temp) = c('y', 'prs')
+        roc_obj = roc.binary(status = 'y',
+                             variable = 'prs', confounders = '~1',
+                             data = dat.temp,
+                             precision=seq(0.05,0.95, by=0.05))
+      }
+      AUC <- roc_obj$auc
+      AUC_res <- cbind(AUC_res,data.frame(testing_AUC=AUC))
+      fwrite2(AUC_res, paste0(opt$PATH_out,"/MUSSEL/AUC_", target[mmm], ".txt"), col.names = T, sep="\t", nThread=NCORES)
+      if ( opt$verbose >= 1 ) cat(paste0("** COMPLETED! MUSSEL AUC saved in ", opt$PATH_out,"/MUSSEL/AUC_", target[mmm], ".txt \n"))
+    }
   }
   
   # if(opt$cleanup){

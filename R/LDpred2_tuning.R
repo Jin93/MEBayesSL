@@ -1,4 +1,5 @@
 rm(list=ls())
+suppressMessages(library(RISCA))
 suppressMessages(library(optparse))
 suppressMessages(library(bigsnpr))
 suppressMessages(library(bigreadr))
@@ -12,6 +13,7 @@ suppressMessages(library(doMC))
 suppressMessages(library(foreach))
 suppressMessages(library(parallel))
 suppressMessages(library(doParallel))
+
 
 option_list = list(
   make_option("--PATH_package", action="store", default=NA, type='character',
@@ -34,6 +36,8 @@ option_list = list(
   make_option("--covar_tuning", action="store", default=NA, type='character',
               help="Path to quantitative covariates (PLINK format) for tuning, separated by comma [optional]"),
   
+  make_option("--trait_type", action="store", default='continuous', type='character',
+              help="Type of phenotype, continuous or binary [required]"),
   make_option("--testing", action="store", default=F, type='logical',
               help="Whether to perform testing in seperate dataset [required]"),
   make_option("--bfile_testing", action="store", default=NA, type='character',
@@ -65,6 +69,7 @@ path_plink <- opt$PATH_plink
 opt$chrom <- gsub("-",":",opt$chrom)
 eval(parse(text=paste0("chrs = c(",opt$chrom,")")))
 
+trait_type <- opt$trait_type
 bfile_tuning_vec <- str_split(opt$bfile_tuning,",")[[1]]
 pheno_tuning_vec <- str_split(opt$pheno_tuning,",")[[1]]
 covar_tuning_vec <- str_split(opt$covar_tuning,",")[[1]]
@@ -207,9 +212,11 @@ if (sum(outputstatus) == (K * 22)){
       fam <- fam[m.keep,]
       pheno <- pheno[m.keep,]
       covar <- covar[m[m.keep],]
-      reg <- summary(lm( pheno[,3] ~ as.matrix(covar[,3:ncol(covar)]) ))
-      if ( opt$verbose == 2 ) cat( reg$r.sq , "variance in phenotype explained by covariates in tuning samples \n" )
-      pheno[,3] <- scale(reg$resid)
+      if (trait_type == 'continuous'){
+        reg <- summary(lm( pheno[,3] ~ as.matrix(covar[,3:ncol(covar)]) ))
+        if ( opt$verbose == 2 ) cat( reg$r.sq , "variance in phenotype explained by covariates in tuning samples \n" )
+        pheno[,3] <- scale(reg$resid)
+      }
     }
     
     ############
@@ -243,12 +250,40 @@ if (sum(outputstatus) == (K * 22)){
     suppressWarnings(dir.create(paste0(opt$PATH_out, "/LDpred2/")))
     set.seed(1)
     
-    R2 <- numeric(length = ncol(SCORE))
-    for (i in 1:ncol(SCORE)){
-      fit <- lm( pheno[,3] ~ SCORE[,i] )
-      R2[i] <- summary(fit)$r.square
+    if (trait_type == 'continuous'){
+      R2 <- numeric(length = ncol(SCORE))
+      for (i in 1:ncol(SCORE)){
+        fit <- lm( pheno[,3] ~ SCORE[,i] )
+        R2[i] <- summary(fit)$r.square
+      }
+      indx <- which.max(R2)
     }
-    indx <- which.max(R2)
+    if (trait_type == 'binary'){
+      AUC <- numeric(length = ncol(SCORE))
+      for (i in 1:ncol(SCORE)){
+        if (!is.na(covar_tuning)){
+          n.covar = ncol(covar)-2
+          dat.temp = as.data.frame(cbind(pheno[,3], SCORE[,i], covar[,-(1:2)]))
+          colnames(dat.temp) = c('y', 'prs', paste0('covar',1:n.covar))
+          roc_obj = roc.binary(status = 'y',
+                               variable = 'prs',
+                               confounders = formula(paste0(paste('', paste(c(paste0('covar',1:n.covar)),collapse="+"), sep='~'))),
+                               data = dat.temp,
+                               precision=seq(0.05,0.95, by=0.05))
+        }
+        if (is.na(covar_tuning)){
+          dat.temp = as.data.frame(cbind(pheno[,3], SCORE[,i]))
+          colnames(dat.temp) = c('y', 'prs')
+          roc_obj = roc.binary(status = 'y',
+                               variable = 'prs', confounders = '~1',
+                               data = dat.temp,
+                               precision=seq(0.05,0.95, by=0.05))
+        }
+        AUC[i] <- roc_obj$auc
+        rm(roc_obj)
+      }
+      indx <- which.max(AUC)
+    }
     
     # Save optimal tuning parameters
     p0 <- params$p[indx]
@@ -257,10 +292,17 @@ if (sum(outputstatus) == (K * 22)){
     optim_params <- data.frame(p0 = p0, h20 = h20, sparse0 = sparse0)
     bigreadr::fwrite2(optim_params, paste0(opt$PATH_out, '/LDpred2/', race, "_optim_params.txt"), col.names = T, sep="\t")#, nThread=NCORES)
     
-    # Get tuning R2
-    R2_res <- data.frame(tuning_R2=R2[indx])
-    bigreadr::fwrite2(R2_res, paste0(opt$PATH_out, '/LDpred2/', race, "_LDpred2_best_R2_tuning.txt"), col.names = T, sep="\t")#, nThread=NCORES)
-    if ( opt$verbose >= 1 ) cat(paste0(race," LDpred2 optimal tuning parameters saved in ", opt$PATH_out, '/LDpred2/', race, "_optimal_param.txt \n"))
+    # Get tuning R2/AUC
+    if (trait_type == 'continuous'){
+      R2_res <- data.frame(tuning_R2=R2[indx])
+      bigreadr::fwrite2(R2_res, paste0(opt$PATH_out, '/LDpred2/', race, "_LDpred2_best_R2_tuning.txt"), col.names = T, sep="\t")#, nThread=NCORES)
+      if ( opt$verbose >= 1 ) cat(paste0(race," LDpred2 optimal tuning parameters saved in ", opt$PATH_out, '/LDpred2/', race, "_optimal_param.txt \n"))
+    }
+    if (trait_type == 'binary'){
+      AUC_res <- data.frame(tuning_AUC=AUC[indx])
+      bigreadr::fwrite2(AUC_res, paste0(opt$PATH_out, '/LDpred2/', race, "_LDpred2_best_AUC_tuning.txt"), col.names = T, sep="\t")#, nThread=NCORES)
+      if ( opt$verbose >= 1 ) cat(paste0(race," LDpred2 optimal tuning parameters saved in ", opt$PATH_out, '/LDpred2/', race, "_optimal_param.txt \n"))
+    }
     
     # Save estimated SNP effect sizes from LDpred2
     best_score <- score[,c(1,2,indx+2)]
@@ -307,9 +349,11 @@ if (sum(outputstatus) == (K * 22)){
         fam <- fam[m.keep,]
         pheno <- pheno[m.keep,]
         covar <- covar[m[m.keep],]
-        reg <- summary(lm( pheno[,3] ~ as.matrix(covar[,3:ncol(covar)]) ))
-        if ( opt$verbose >= 1 ) cat( round(reg$r.sq, 4) , "variance in phenotype explained by covariates in testing samples \n" )
-        pheno[,3] <- scale(reg$resid)
+        if (trait_type == 'continuous'){
+          reg <- summary(lm( pheno[,3] ~ as.matrix(covar[,3:ncol(covar)]) ))
+          if ( opt$verbose >= 1 ) cat( round(reg$r.sq, 4) , "variance in phenotype explained by covariates in testing samples \n" )
+          pheno[,3] <- scale(reg$resid)
+        }
       }
       
       ############
@@ -317,7 +361,7 @@ if (sum(outputstatus) == (K * 22)){
       
       arg <- paste0(opt$PATH_plink," --threads 1 --silent",#NCORES,
                     " --bfile ", bfile_testing,
-                    " --score ", out_path,"/LDpred2_beta.txt header-read",
+                    " --score ", opt$PATH_out, '/LDpred2/', race, "_LDpred2_beta.txt header-read",
                     " cols=+scoresums,-scoreavgs --score-col-nums 3",
                     " --out ", out_path,"/tmp/PRS/LDpred2_PRS_testing")
       
@@ -332,12 +376,37 @@ if (sum(outputstatus) == (K * 22)){
       SCORE <- SCORE[m[m.keep],]
       
       # Get testing R2
-      fit <- lm(pheno[,3]~SCORE[,5])
-      R2 <- summary(fit)$r.square
-      R2_res <- cbind(R2_res,data.frame(testing_R2=R2))
-      bigreadr::fwrite2(R2_res, paste0(opt$PATH_out, '/LDpred2/', race, "_LDpred_R2_testing.txt"), col.names = T, sep="\t")#, nThread=NCORES)
-      if ( opt$verbose >= 1 ) cat(paste0("** !COMPLETED! R2 is saved in ", opt$PATH_out, '/LDpred2/', race, "_LDpred_R2_testing.txt \n"))
-      
+      if (trait_type == 'continuous'){
+        fit <- lm(pheno[,3]~SCORE[,5])
+        R2 <- summary(fit)$r.square
+        R2_res <- cbind(R2_res,data.frame(testing_R2=R2))
+        bigreadr::fwrite2(R2_res, paste0(opt$PATH_out, '/LDpred2/', race, "_LDpred_R2_testing.txt"), col.names = T, sep="\t")#, nThread=NCORES)
+        if ( opt$verbose >= 1 ) cat(paste0("** !COMPLETED! R2 is saved in ", opt$PATH_out, '/LDpred2/', race, "_LDpred_R2_testing.txt \n"))
+      }
+      if (trait_type == 'binary'){
+        if (!is.na(covar_tuning)){
+          n.covar = ncol(covar)-2
+          dat.temp = as.data.frame(cbind(pheno[,3], SCORE[,5], covar[,-(1:2)]))
+          colnames(dat.temp) = c('y', 'prs', paste0('covar',1:n.covar))
+          roc_obj = roc.binary(status = 'y',
+                               variable = 'prs',
+                               confounders = formula(paste0(paste('', paste(c(paste0('covar',1:n.covar)),collapse="+"), sep='~'))),
+                               data = dat.temp,
+                               precision=seq(0.05,0.95, by=0.05))
+        }
+        if (is.na(covar_tuning)){
+          dat.temp = as.data.frame(cbind(pheno[,3], SCORE[,5]))
+          colnames(dat.temp) = c('y', 'prs')
+          roc_obj = roc.binary(status = 'y',
+                               variable = 'prs', confounders = '~1',
+                               data = dat.temp,
+                               precision=seq(0.05,0.95, by=0.05))
+        }
+        AUC <- roc_obj$auc
+        AUC_res <- cbind(AUC_res,data.frame(testing_AUC=AUC))
+        bigreadr::fwrite2(AUC_res, paste0(opt$PATH_out, '/LDpred2/', race, "_LDpred_AUC_testing.txt"), col.names = T, sep="\t")#, nThread=NCORES)
+        if ( opt$verbose >= 1 ) cat(paste0("** !COMPLETED! AUC is saved in ", opt$PATH_out, '/LDpred2/', race, "_LDpred_AUC_testing.txt \n"))
+      }
     }
     
     # if(opt$cleanup){
