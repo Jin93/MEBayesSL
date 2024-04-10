@@ -25,7 +25,7 @@ Please refer to the [paper](https://www.cell.com/cell-genomics/fulltext/S2666-97
 
 The LD reference data contains SNP information and LD estimates by LD block for genetic variants that are in the [HapMap3](https://www.broadinstitute.org/medical-and-population-genetics/hapmap-3) plus [MEGA Chip](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5156387/) list. Note: in some scenarios, the training GWAS sample for a population consists of multiple ancestry groups, in this case, ideally, a customized LD reference dataset should be created for this population with matched ancestral composition. The code for constructing such LD reference dataset can be requested (Jin.Jin@Pennmedicine.upenn.edu).
 
-Please choose one of the two LD reference panels according to the training GWAS sample sizes (please see detailed description for each LD panel). Each reference data contains two folders: 
+Please choose one of the two LD reference panels according to the training GWAS sample sizes (please see detailed description below). Each reference data contains two folders: 
 
 `./raw/`: raw LD reference genotype data (.bim, .bed,. fam), which are input files for estimating LD matrices in LDpred2 and for an intermediate step of summarizing LD information in the [MUSS](#mussel-manual) step.
 
@@ -229,7 +229,7 @@ path_LDref='/dcs04/nilanjan/data/jjin/LD_1kg'
 path_out='/dcs04/nilanjan/data/jjin/MUSSEL/test'
 path_plink='/dcl01/chatterj/data/jin/software/plink2'
 target_pop='EUR,AFR'
-trait_type = 'continuous'
+trait_type='continuous'
 ```
 Note: load the R version for which the required R packages were installed, in this example, R Version 4.2.2 Patched (2023-03-01 r83924).
 
