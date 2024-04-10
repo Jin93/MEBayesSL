@@ -124,9 +124,9 @@ MUSSEL workflow:
   height=85%>
 </p>
 
-### Step 0 
+### Step 0: run LDpred2 by ancestry
 
-Run LDpred2 by ancestry, obtain the estimated causal SNP proportion ($p_k, k=1,2,\ldots,K$) and heritability ($h^2_k, k=1,2,\ldots,K$) parameters in LDpred2 for each of $K$ training ancestry groups. These parameters will be used to specify the prior causal SNP proportions and heritability parameters in [MUSS](#step-1:-muss).
+This step is to obtain the estimated causal SNP proportion ($p_k, k=1,2,\ldots,K$) and heritability ($h^2_k, k=1,2,\ldots,K$) parameters in LDpred2 for each of $K$ training ancestry groups. These parameters will be used to specify the prior causal SNP proportions and heritability parameters in [MUSS](#step-1:-muss).
 
 
 LDpred2_jobs.R: submit LDpred2 jobs by chromosome.
