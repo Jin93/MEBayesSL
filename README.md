@@ -23,7 +23,7 @@ Please refer to the [paper](https://www.cell.com/cell-genomics/fulltext/S2666-97
 
 - Download the LD reference data and save the unzipped folder in ${path_LDref}.
 
-The LD reference data contains SNP information and LD estimates by LD block for genetic variants that are in the [HapMap3](https://www.broadinstitute.org/medical-and-population-genetics/hapmap-3) plus [MEGA Chip](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5156387/) list. Note: in some scenarios, the training GWAS sample for a population consists of multiple ancestry groups, in this case, ideally, a customized LD reference dataset should be created for this population with matched ancestral composition. The code for constructing such LD reference dataset can be requested (Jin.Jin@Pennmedicine.upenn.edu).
+The LD reference data contains SNP information and LD estimates by LD block for genetic variants that are in the [HapMap3](https://www.broadinstitute.org/medical-and-population-genetics/hapmap-3) plus [MEGA Chip](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5156387/) list. Note: in some scenarios, the training GWAS sample for a population consists of multiple ancestry groups, in this case, ideally, a customized LD reference dataset should be created for this population with matched ancestral composition. The code for constructing such LD reference dataset can be accessed [here](R/Generate_LD_info_by_LDblock.R).
 
 Please choose one of the two LD reference panels according to the training GWAS sample sizes (please see detailed description below). Each reference data contains two folders: 
 
