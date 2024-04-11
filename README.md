@@ -1,8 +1,8 @@
 # MUSSEL
 
-MUSSEL is an R-based command line tool for implementing MUSSEL, a method for developing ancestry-specific polygenic risk score (PRS) that integrates information from GWAS summary statistics and external LD reference data from multiple populations (ancestry groups). MUSSEL infers SNP effect sizes via a Bayesian model with an induced prior correlation structure across populations followed by an ensemble learning step with the Super Learner. As intermediate products, LDpred2 PRS models trained separately on GWAS data for each population will also be generated.
+MUSSEL is an R-based command line tool for implementing MUSSEL, a method for developing ancestry-specific polygenic risk score (PRS) that integrates information from GWAS summary statistics and external LD reference data from multiple populations (ancestry groups). MUSSEL infers SNP effect sizes via a Bayesian model with an induced prior correlation structure across populations followed by an ensemble learning step with the Super Learner. As intermediate products, LDpred2 PRS models trained separately on GWAS data for each population will also be generated (please see [Example](#example) for details).
 
-Please refer to the [paper](https://www.cell.com/cell-genomics/fulltext/S2666-979X(24)00095-8#secsectitle0030) or contact Jin Jin (Jin.Jin@Pennmedicine.upenn.edu) for details.
+To use the tool, please follow the instructions in [Getting Started](#gettingstarted) to download the required code and data, then try our example code in [Example](#example). Please refer to the [paper](https://www.cell.com/cell-genomics/fulltext/S2666-979X(24)00095-8#secsectitle0030) or contact Jin Jin (Jin.Jin@Pennmedicine.upenn.edu) for details.
 </br>
 
 
@@ -257,7 +257,7 @@ Rscript ${package}/R/LDpred2_jobs.R \
 
 ### Step 2: Obtain tuned parameters from LDpred2
 
-Wait until all LDpred2 jobs are completed to run this step. Tuned LDpred2 effect size estimates and the optimal tuning parameters are saved in ${path_out}.
+Wait until all LDpred2 jobs are completed to run this step. Tuned LDpred2 effect size estimates and the optimal tuning parameters are saved in ${path_out}. This step also generates the LDpred2 PRS models for each ancestry group as by products, which will be saved in `${path_out}/LDpred2/{race}_LDpred2_beta.txt`.
 
 ``` r
 Rscript ${package}/R/LDpred2_tuning.R \
