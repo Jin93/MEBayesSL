@@ -217,7 +217,7 @@ MUSSEL.R --PATH_package --PATH_out --PATH_plink --FILE_sst --pop --chrom --bfile
 </br>
 
 
-## :large_blue_circle: Example
+## Example
 Download [example data](https://www.dropbox.com/scl/fi/bne781g2qsq67p0r9y9cl/example.zip?rlkey=6aw5tnfpbnjc3ieq1ee4do2ay&dl=0), decompress it by `tar -zxvf example.tar.gz` and save the files under the directory ${path_example}. Download the 1000 Genomes reference data and save the decompressed files in ${path_LDref}. Create a new folder `path_out` (e.g., in this example, `/dcs04/nilanjan/data/jjin/MUSSEL/test`) to save the output. Run the example code below with your own data directories and check if the results/outputs (saved in ${path_out}) are consistent with the results/outputs here: [example results](https://www.dropbox.com/s/hjmqghn2jva0950/MUSSEL_example_data_results.zip?dl=0).
 
 ```r 
