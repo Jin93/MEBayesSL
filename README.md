@@ -35,7 +35,7 @@ Please choose one of the two LD reference panels according to the training GWAS 
 ### 1. UK Biobank LD reference data
 
 - 10,000 EUR, 4,585 AFR, 687 AMR, 1,010 EAS, 5,427 SAS.
-- __Highly recommended when training GWAS sample sizes are relatively large, e.g., N<sub>GWAS</sub> > 50K for at least one ancestry groups__.
+- __Recommended when training GWAS sample sizes are relatively large, e.g., N<sub>GWAS</sub> > 50K for at least one ancestry groups__.
 
 [EUR reference data](https://www.dropbox.com/scl/fi/09yd12dest1tqxkt8p8ch/EUR.zip?rlkey=774vb1e5d6hfnyucilx160cyo&dl=0) (~13.15G): `tar -zxvf EUR.tar.gz`
 
@@ -52,7 +52,7 @@ Note: PRS trained using the larger UKBB LD reference data is usually more powerf
 ### 2. LD reference data constructed based on the 1000 Genomes Project phase 3 samples 
 
 - 498 EUR, 659 AFR, 347 AMR, 503 EAS, 487 SAS.
-- Recommended when GWAS training sample sizes are relatively small, e.g., N<sub>GWAS</sub> < 50K for all ancestry groups.
+- __Recommended when GWAS training sample sizes are relatively small, e.g., N<sub>GWAS</sub> < 50K for all ancestry groups__.
 
 [EUR reference data](https://www.dropbox.com/s/wvxh4yqthm8m7uf/EUR.zip?dl=0) (~6.73G): `tar -zxvf EUR.tar.gz`
 
