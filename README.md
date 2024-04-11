@@ -2,7 +2,7 @@
 
 MUSSEL is an R-based command line tool for implementing MUSSEL, a method for developing ancestry-specific polygenic risk score (PRS) that integrates information from GWAS summary statistics and external LD reference data from multiple populations (ancestry groups). MUSSEL infers SNP effect sizes via a Bayesian model with an induced prior correlation structure across populations followed by an ensemble learning step with the Super Learner. As intermediate products, LDpred2 PRS models trained separately on GWAS data for each population will also be generated (please see [Example](#example) for details).
 
-To use the tool, please follow the instructions in [Getting Started](#gettingstarted) to download the required code and data, then try our example code in [Example](#example). Please refer to the [paper](https://www.cell.com/cell-genomics/fulltext/S2666-979X(24)00095-8#secsectitle0030) or contact Jin Jin (Jin.Jin@Pennmedicine.upenn.edu) for details.
+To use the tool, please follow the instructions in [Getting Started](#gettingstarted) to download the required code and data, then try our example code in [Example](#example). Please refer to the [paper](https://www.cell.com/cell-genomics/fulltext/S2666-979X(24)00095-8) or contact Jin Jin (Jin.Jin@Pennmedicine.upenn.edu) for details.
 </br>
 
 
@@ -330,6 +330,6 @@ Please report any issues on the Issues page, I will respond as soon as possible.
 
 ## Citation
 
-__Jin, J.__, Zhan, J., Zhang, J., Zhao, R., O’Connell J, Jiang, Y., Buyske, S., Gignoux, C., Haiman, C., Kenny, E.E., Kooperberg, C., et al. MUSSEL: Enhanced Bayesian polygenic risk prediction leveraging information across multiple ancestry groups. Cell Genomics 4(4), 100539, 2024. [Link](https://www.cell.com/cell-genomics/fulltext/S2666-979X(24)00095-8#secsectitle0030)
+__Jin, J.__, Zhan, J., Zhang, J., Zhao, R., O’Connell J, Jiang, Y., Buyske, S., Gignoux, C., Haiman, C., Kenny, E.E., Kooperberg, C., et al. MUSSEL: Enhanced Bayesian polygenic risk prediction leveraging information across multiple ancestry groups. Cell Genomics 4(4), 100539, 2024. [Link](https://www.cell.com/cell-genomics/fulltext/S2666-979X(24)00095-8)
 
 

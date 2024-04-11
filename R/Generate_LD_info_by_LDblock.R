@@ -96,7 +96,7 @@ for (k in 1:length(eth)){
       paste0('--r bin4'),
       paste0('--threads 1'),
       paste0('--out ', blockdir, '/tmp/LD/chr',chr,'/chr',chr,'_start_',ldblock[1, 'start'])
-    )
+    ) # this step may print error message like "Error: No variants remaining after main filters.", which is fine.
     system(plinkcode)
     plinkcode = paste(
       dir.plink,
@@ -105,7 +105,7 @@ for (k in 1:length(eth)){
       paste0('--r bin4'),
       paste0('--threads 1'),
       paste0('--out ', blockdir, '/tmp/LD/chr',chr,'/chr',chr,'_',ldblock[nrow(ldblock), 'stop'],'_end')
-    )
+    ) # this step may print error message like "Error: No variants remaining after main filters.", which is fine.
     system(plinkcode)
     print(paste0('Complete ',race,' chr ',chr))
   }
