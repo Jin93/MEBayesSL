@@ -21,7 +21,7 @@ Please refer to the [paper](https://www.cell.com/cell-genomics/fulltext/S2666-97
 - Download the `ref_bim.txt` from [this link](https://www.dropbox.com/s/58uzwqewxv34wal/ref_bim.txt?dl=0) and save it under `/MUSSEL/`.
 
 
-- Download and decompress the LD reference data and save the decompressed folders in ${path_LDref}.
+- Download the LD reference data and save the unzipped folders in ${path_LDref}.
 
 The LD reference data contains SNP information and LD estimates by LD block for genetic variants that are in the [HapMap3](https://www.broadinstitute.org/medical-and-population-genetics/hapmap-3) plus [MEGA Chip](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5156387/) list. Note: in some scenarios, the training GWAS sample for a population consists of multiple ancestry groups, in this case, ideally, a customized LD reference dataset should be created for this population with matched ancestral composition. The code for constructing such LD reference dataset can be requested (Jin.Jin@Pennmedicine.upenn.edu).
 
