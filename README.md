@@ -21,7 +21,7 @@ Please refer to the [paper](https://www.cell.com/cell-genomics/fulltext/S2666-97
 - Download the `ref_bim.txt` from [this link](https://www.dropbox.com/s/58uzwqewxv34wal/ref_bim.txt?dl=0) and save it under `/MUSSEL/`.
 
 
-- Download the LD reference data and save the unzipped folders in ${path_LDref}.
+- Download the LD reference data and save the unzipped folder in ${path_LDref}.
 
 The LD reference data contains SNP information and LD estimates by LD block for genetic variants that are in the [HapMap3](https://www.broadinstitute.org/medical-and-population-genetics/hapmap-3) plus [MEGA Chip](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5156387/) list. Note: in some scenarios, the training GWAS sample for a population consists of multiple ancestry groups, in this case, ideally, a customized LD reference dataset should be created for this population with matched ancestral composition. The code for constructing such LD reference dataset can be requested (Jin.Jin@Pennmedicine.upenn.edu).
 
@@ -104,7 +104,7 @@ Before running the MUSSEL pipeline, please consider applying the following quali
 
 __Note:__ 
 
-there are several command lines that need to be customized by users because of discrepancies in server:
+there are several command lines that may need to be customized by users because of discrepancies in server:
 
 - The linux commands for submitting jobs on server (lines 88 - 94 and line 110: "sbatch --mem=30G" in `LDpred2_jobs.R`, and lines 120 - 126 and lines 145 - 146 (e.g., "sbatch --mem=35G"), in `MUSS_jobs.R`), may need to be modified according to the server used (e.g., "module load conda_R", "module load R/4.3", etc.).
 - For the commands in line 110 in `LDpred2_jobs.R`: "sbatch --mem=25G", the memory is required for running LDpred2 sequentially on two ancestry groups with NCORES=11 cores. If more ancestries are included, a larger memory (e.g., 40G for $K=5$) may need to requested (mainly for loading the LD information). Similarly, for the commands in lines 145 - 146 in `MUSS_jobs.R`: the required memory should be customized according to the number of training ancestry groups ($K$). The default memory requirement in MUSS_jobs.R is for jointly modeling 2 ancestry groups. For modeling more ancestry groups, the requested memory can be estimated as a linear function of $K$.
@@ -330,6 +330,6 @@ Please report any issues on the Issues page, I will respond as soon as possible.
 
 ## Citation
 
-__Jin, J.__, Zhan, J., Zhang, J., Zhao, R., O’Connell, J., Jiang, Y., Aslibekyan, S., Auton, A., Babalola, E., Bell, R.K., et al. MUSSEL: Enhanced Bayesian polygenic risk prediction leveraging information across multiple ancestry groups. Cell Genomics 4(4), 100539, 2024. [Link](https://www.cell.com/cell-genomics/fulltext/S2666-979X(24)00095-8#secsectitle0030)
+__Jin, J.__, Zhan, J., Zhang, J., Zhao, R., O’Connell J, Jiang, Y., Buyske, S., Gignoux, C., Haiman, C., Kenny, E.E., Kooperberg, C., et al. MUSSEL: Enhanced Bayesian polygenic risk prediction leveraging information across multiple ancestry groups. Cell Genomics 4(4), 100539, 2024. [Link](https://www.cell.com/cell-genomics/fulltext/S2666-979X(24)00095-8#secsectitle0030)
 
 
