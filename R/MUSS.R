@@ -69,6 +69,7 @@ races = str_split(opt$pop,",")[[1]]; K <- length(races)
 sumdata_paths = str_split(opt$FILE_sst,",")[[1]]
 ref_paths <- paste0(opt$PATH_LDref, "/", races, "/raw") # raw LD reference genotype data by ancestry group and chromosome
 LD_paths <- paste0(opt$PATH_LDref, "/", races, "/LD") # precalculated block-wise reference LD matrices by ancestry group and chromosome (generated based on the raw reference genotype data)
+map_paths <- paste0(opt$PATH_LDref,"/",races, "/map")
 out_paths <- paste0(opt$PATH_out,"/",races)
 chr = opt$chrom
 ldpred2_params_path = str_split(opt$LDpred2_params,",")[[1]]
@@ -173,25 +174,10 @@ hsq = numeric()
 for (k in 1:K){
   ref_path <- ref_paths[k]
   LD_path <- LD_paths[k]
+  map_path <- map_paths[k]
   out_path <- out_paths[k]
   
-  suppressWarnings(dir.create(paste0(out_path, "/tmp/ref_files")))
-  system(paste0('rm -rf ', out_path,'/tmp/ref_files/chr', chr, '.OMNI.interpolated_genetic_map'))
-  
-  temfile = paste0(ref_path,'/chr',chr,'.bk')
-  system(paste0('rm -rf ',temfile))
-  temfile = paste0(ref_path,'/chr',chr,'.rds')
-  system(paste0('rm -rf ',temfile))
-  snp_readBed(paste0(ref_path,'/chr',chr,'.bed'))
-  obj.bigSNP <- snp_attach(paste0(ref_path,'/chr',chr,'.rds'))
-  map <- obj.bigSNP$map[-c(3)]
-  names(map) <- c("chr", "rsid", "pos", "a0", "a1") # c("chr", "pos", "a0", "a1")
-  
-  G   <- obj.bigSNP$genotypes
-  CHR <- obj.bigSNP$map$chromosome
-  POS <- obj.bigSNP$map$physical.pos
-  POS2 <- snp_asGeneticPos(CHR, POS, dir = paste0(out_path, "/tmp/ref_files"), ncores = 5)
-
+  map <- readRDS(paste0(map_path,'/map_MUSS_chr',chr,'.rds'))
   ## Load LD information (saved in a list) by LD block:
   # Load snps_list (rsid), Nsnps: 
   load(paste0(LD_path, '/standard_data/chr',chr,'_snps.RData'))
@@ -221,9 +207,9 @@ for (k in 1:K){
   remove.indx =  which(sapply(1:length(LD_list), function(x){length(LD_list[[x]])}) == 0)# c(1,length(LD_list))
   if (length(remove.indx) > 0) LD_list = LD_list[-remove.indx]
   allele_folder = paste0(LD_path, '/tmp/byblock/chr',chr,'/')
-  if (length(remove.indx) == 2) num_files <- (length(list.files(allele_folder))-2)/4
-  if (length(remove.indx) == 1) num_files <- (length(list.files(allele_folder))-1)/4
-  if (length(remove.indx) == 0) num_files <- (length(list.files(allele_folder)))/4
+  # if (length(remove.indx) == 2) num_files <- (length(list.files(allele_folder))-2)/4
+  # if (length(remove.indx) == 1) num_files <- (length(list.files(allele_folder))-1)/4
+  # if (length(remove.indx) == 0) num_files <- (length(list.files(allele_folder)))/4
   allele_files = list.files(allele_folder)
   allele_files = allele_files[which(str_detect(allele_files, c('.bim')))]
   allele_list = list()
@@ -367,8 +353,8 @@ if (sum(duplicated(settings)) > 0) settings = settings[-which(duplicated(setting
 
 indmat = as.matrix(snpinfo[,3:(K+2)])
 snpinfo_rsid = snpinfo$rsid
-n.burnin = 3e1 * K
-niter = 8e1 * K
+n.burnin = 4e1 * K
+niter = 1e2 * K
 
 ########################################################################
 ########################################################################
@@ -382,13 +368,14 @@ registerDoMC(ncores)
 
 if (opt$verbose >= 1) cat(paste0('\n** MCMC started under all parameter settings. ** \n'))
 ff <- foreach(ss = 1:nrow(settings), .combine='c', .multicombine=TRUE) %dopar% {
+  # ii = icount(), .final = function(x) NULL
   r = rs[[settings[ss,'r.indx']]]
   p.causal = as.numeric(settings[ss,paste0('p.causal',1:K)]);
   
   MUSSout = MUSS(ss, chain=1, n.burnin, niter, settings, r, r.sign,
                     M, Mt, indmat, tem, beta_init, sigmasq, Bh, C.sfbm,
                     H2, snp.index, sparse, snpinfo)
-  
+  # progBar(ii, nrow(settings), per=1)
   list(MUSSout)
 }
 

@@ -107,7 +107,7 @@ cat(paste0(' --NCORES ', opt$NCORES), file = zz, sep = "\n")
 cat("\n", file=zz)
 cat(paste0('wait'), file = zz, sep = " ")
 
-system(paste0('sbatch --mem=30G ' ,rscripts_path, 'LDpred2_rscript.sh'))
+system(paste0('sbatch --mem=25G ' ,rscripts_path, 'LDpred2_rscript.sh'))
 
 print(paste0('R scripts submitted for running LDpred2.'))
 

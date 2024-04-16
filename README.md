@@ -14,6 +14,8 @@ To use the tool, please follow the instructions in [Getting Started](#gettingsta
 </br>
 
 
+
+
 ## Getting Started
 
 - Download or clone the Github repository by `git clone https://github.com/Jin93/MUSSEL.git`. From now on, we will refer to the folder as `/MUSSEL/` for simplicity.
@@ -21,48 +23,49 @@ To use the tool, please follow the instructions in [Getting Started](#gettingsta
 - Download the `ref_bim.txt` from [this link](https://www.dropbox.com/s/58uzwqewxv34wal/ref_bim.txt?dl=0) and save it under `/MUSSEL/`.
 
 
-- Download the LD reference data and save the unzipped folder in ${path_LDref}.
+- Download the LD reference information and save the unzipped folder in ${path_LDref}.
 
-The LD reference data contains SNP information and LD estimates by LD block for genetic variants that are in the [HapMap3](https://www.broadinstitute.org/medical-and-population-genetics/hapmap-3) plus [MEGA Chip](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5156387/) list. Note: in some scenarios, the training GWAS sample for a population consists of multiple ancestry groups, in this case, ideally, a customized LD reference dataset should be created for this population with matched ancestral composition. The code for constructing such LD reference dataset can be accessed [here](R/Generate_LD_info_by_LDblock.R).
+The (pre-computed) LD information contains SNP information and LD matrix estimates for:
+  1. ~ 2.18 million [HapMap3](https://www.broadinstitute.org/medical-and-population-genetics/hapmap-3) and [MEGA ](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5156387/) SNPs.
+  2. For five ancestry groups: European (EUR), African/African America (AFR), Hispanic/Latino/Admixed American (AMR), East Asian (EAS), and South Asian (SAS).
+  3. Based on either the UK Biobank samples (recommended when training GWAS sample sizes are relatively large, e.g., N<sub>GWAS</sub> > 50K for at least one ancestry), or the 1000 Genomes samples (recommended when GWAS training sample sizes are relatively small, e.g., N<sub>GWAS</sub> < 50K for all ancestry groups).
+
+
+Note: in some scenarios, the training GWAS sample for a population consists of multiple ancestry groups. In this case, ideally, a customized LD reference dataset should be created for this population with matched ancestral composition. The code for constructing such LD reference dataset can be accessed [here](R/Generate_LD_info_by_LDblock.R).
+
 
 Please choose one of the two LD reference panels according to the training GWAS sample sizes (please see detailed description below). Each reference data contains two folders: 
 
-`./raw/`: raw LD reference genotype data (.bim, .bed,. fam), which are input files for estimating LD matrices in LDpred2 and for an intermediate step of summarizing LD information in the [MUSS](#mussel-manual) step.
+`./precalLD/`: Pre-computed LD matrices and SNP information by LD block for implementing LDpred2 ([Step 0](#step-0:-run-ldpred2-by-ancestry)).
 
-`./LD/`: Precalculated LD matrices and SNP information by LD block, which are input files in MUSS.
+`./LD/`: Pre-computed LD matrices and SNP information by LD block, which are input files in MUSS.
+
+`./map/`: SNP information (SNP ID, alleles) for mapping alleles between LD reference panel and GWAS summary data in LDpred2 and MUSS.
+
+`./raw/`: raw LD reference genotype data (.bim) by chromosome, which will be used in MUSS ([Step 1](#step-1:-muss)).
 
 
-### 1. UK Biobank LD reference data
+
+### 1. UK Biobank LD reference data (currently been updated)
 
 - 10,000 EUR, 4,585 AFR, 687 AMR, 1,010 EAS, 5,427 SAS.
 - __Recommended when training GWAS sample sizes are relatively large, e.g., N<sub>GWAS</sub> > 50K for at least one ancestry groups__.
 
-[EUR reference data](https://www.dropbox.com/scl/fi/09yd12dest1tqxkt8p8ch/EUR.zip?rlkey=774vb1e5d6hfnyucilx160cyo&dl=0) (~13.15G): `tar -zxvf EUR.tar.gz`
-
-[AFR reference data](https://www.dropbox.com/scl/fi/jfymih83anr2vuevmfqok/AFR.zip?rlkey=r1lxpn1fnbk98ssf8f8ji4xkk&dl=0) (~11.59G): `tar -zxvf AFR.tar.gz`
-
-[AMR reference data](https://www.dropbox.com/s/2ba4tsbhz03rg83/AMR.zip?dl=0) (~4.88G): `tar -zxvf AMR.tar.gz`
-
-[EAS reference data](https://www.dropbox.com/s/uofu788707dp4xv/EAS.zip?dl=0) (~4.27G): `tar -zxvf EAS.tar.gz`
-
-[SAS reference data](https://www.dropbox.com/scl/fi/o635c86ylthbl3omfetbu/SAS.zip?rlkey=ot396toxl0phaiae15cnpbeyn&dl=0) (~11.44G): `tar -zxvf SAS.tar.gz`
-
-Note: PRS trained using the larger UKBB LD reference data is usually more powerful than PRS trained using the 1000G reference data, especially with a sufficiently large discovery GWAS sample size (e.g., >100K).
 
 ### 2. LD reference data constructed based on the 1000 Genomes Project phase 3 samples 
 
 - 498 EUR, 659 AFR, 347 AMR, 503 EAS, 487 SAS.
 - __Recommended when GWAS training sample sizes are relatively small, e.g., N<sub>GWAS</sub> < 50K for all ancestry groups__.
 
-[EUR reference data](https://www.dropbox.com/s/wvxh4yqthm8m7uf/EUR.zip?dl=0) (~6.73G): `tar -zxvf EUR.tar.gz`
+[EUR reference data](https://www.dropbox.com/scl/fi/3ph161wy3vy6w8quxrvc5/EUR.zip?rlkey=zbf3qx16s5gehyre92lvnepwc&dl=0) (~26.33G): `tar -zxvf EUR.tar.gz`
 
-[AFR reference data](https://www.dropbox.com/s/iwqg65uieevfzj2/AFR.zip?dl=0) (~7.69G): `tar -zxvf AFR.tar.gz`
+[AFR reference data](https://www.dropbox.com/scl/fi/ooh52nts7nn9xh1bjagxh/AFR.zip?rlkey=ap7kh3khonqvvyrrtm1ssm6pp&dl=0) (~36.81G): `tar -zxvf AFR.tar.gz`
 
-[AMR reference data](https://www.dropbox.com/s/mev5zyf4x6m076q/AMR.zip?dl=0) (~8.80G): `tar -zxvf AMR.tar.gz`
+[AMR reference data](https://www.dropbox.com/scl/fi/5xawic4f2sro12kt9o7sw/AMR.zip?rlkey=2szu5360a3z01dc7bb8hnsz6m&dl=0) (~32.82G): `tar -zxvf AMR.tar.gz`
 
-[EAS reference data](https://www.dropbox.com/s/o28mlovtakv5n7v/EAS.zip?dl=0) (~5.63G): `tar -zxvf EAS.tar.gz`
+[EAS reference data](https://www.dropbox.com/scl/fi/2qq1ybobaht6740dez09i/EAS.zip?rlkey=pq6x05e9pzl2y53sb1ugzzv4k&dl=0) (~19.90G): `tar -zxvf EAS.tar.gz`
 
-[SAS reference data](https://www.dropbox.com/s/idp02rgl8xv379b/SAS.zip?dl=0) (~2.60G): `tar -zxvf SAS.tar.gz`
+[SAS reference data](https://www.dropbox.com/scl/fi/a2d7jqa4027w2q2y1u5qt/SAS.zip?rlkey=62fw06o1u8xv8epen8565dpoc&dl=0) (~21.61G): `tar -zxvf SAS.tar.gz`
 
 
 - Install [PLINK1.9](https://www.cog-genomics.org/plink/) and [PLINK2](https://www.cog-genomics.org/plink/2.0/).
@@ -218,7 +221,7 @@ MUSSEL.R --PATH_package --PATH_out --PATH_plink --FILE_sst --pop --chrom --bfile
 
 
 ## Example
-Download [example data](https://www.dropbox.com/scl/fi/bne781g2qsq67p0r9y9cl/example.zip?rlkey=6aw5tnfpbnjc3ieq1ee4do2ay&dl=0), decompress it by `tar -zxvf example.tar.gz` and save the files under the directory ${path_example}. Download the 1000 Genomes reference data and save the decompressed files in ${path_LDref}. Create a new folder `path_out` (e.g., in this example, `/dcs04/nilanjan/data/jjin/MUSSEL/test`) to save the output. Run the example code below with your own data directories and check if the results/outputs (saved in ${path_out}) are consistent with the results/outputs here: [example results](https://www.dropbox.com/s/hjmqghn2jva0950/MUSSEL_example_data_results.zip?dl=0).
+Download [example data](https://www.dropbox.com/scl/fi/bne781g2qsq67p0r9y9cl/example.zip?rlkey=6aw5tnfpbnjc3ieq1ee4do2ay&dl=0), decompress it by `tar -zxvf example.tar.gz` and save the files under the directory ${path_example}. Download the 1000 Genomes reference data and save the decompressed files in ${path_LDref}. Create a new folder `path_out` (e.g., in this example, `/dcs04/nilanjan/data/jjin/MUSSEL/test`) to save the output. Run the example code below with your own data directories and check if the results/outputs (saved in ${path_out}) are consistent with the results/outputs here: [example results](https://www.dropbox.com/scl/fi/44z9rkku5nsc45yvdm6hk/MEBayesSL_example_data_results.zip?rlkey=rrmgjwu4at0nbr4spjj6836l5&dl=0).
 
 ```r 
 module load R

@@ -69,6 +69,10 @@ rm(list="files")
 
 NCORES <- opt$NCORES
 
+temp <- commandArgs(TRUE)
+race = races[as.numeric(temp[1])]
+chr =  as.numeric(temp[2])
+
 source(paste0(opt$PATH_package,"/R/source-functions.R"))
 ldr = 3/1000 # default ld radius in LDpred2
 
@@ -91,7 +95,6 @@ for(mmm in 1:K){
 
   suppressWarnings(dir.create(paste0(out_path)))
   suppressWarnings(dir.create(paste0(out_path, "/tmp")))
-  suppressWarnings(dir.create(paste0(out_path, "/tmp/ref_files")))
   suppressWarnings(dir.create(paste0(out_path, "/tmp/beta_files")))
   suppressWarnings(dir.create(paste0(out_path, "/tmp/beta_files/beta_in_all_settings")))
 

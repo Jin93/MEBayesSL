@@ -921,7 +921,7 @@ MUSS = function(ss, chain, n.burnin, niter, settings, r, r.sign,
         pm3[indmat[snp.index$snp.index3,3]] = pm3[indmat[snp.index$snp.index3,3]] + res3[2,]; pm4[indmat[snp.index$snp.index4,4]] = pm4[indmat[snp.index$snp.index4,4]] + res4[2,]
         pm5[indmat[snp.index$snp.index5,5]] = pm5[indmat[snp.index$snp.index5,5]] + res5[2,]
       }
-      progBar(s, niter, per=5)
+      progBar(s, niter, per=10)
     }
     pm1 = pm1/(niter-n.burnin); pm2 = pm2/(niter-n.burnin); pm3 = pm3/(niter-n.burnin); pm4 = pm4/(niter-n.burnin); pm5 = pm5/(niter-n.burnin)
     names(pm1) = snpinfo$rsid[tem[[1]]]; names(pm2) = snpinfo$rsid[tem[[2]]]

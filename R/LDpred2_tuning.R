@@ -153,7 +153,6 @@ if (sum(outputstatus) == (K * 22)){
     
     suppressWarnings(dir.create(paste0(out_path)))
     suppressWarnings(dir.create(paste0(out_path, "/tmp")))
-    suppressWarnings(dir.create(paste0(out_path, "/tmp/ref_files")))
     suppressWarnings(dir.create(paste0(out_path, "/tmp/beta_files")))
     suppressWarnings(dir.create(paste0(out_path, "/tmp/beta_files/beta_in_all_settings")))
 
