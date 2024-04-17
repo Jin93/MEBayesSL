@@ -174,9 +174,9 @@ for (k in 1:length(eth)){
         tmp.LD[is.nan(tmp.LD)] <- 1; tmp.LD <- matrix(tmp.LD, ncol=n.snp.tmp)
         if (n.snp.tmp > 1){
           drop = findCorrelation(tmp.LD,cutoff = 0.999999)
-          Nsnps[1] <- n.snp.tmp - length(drop)
-          snps_list[[1]] <- tmp.snps$V2[-drop]
-          LD_list[[1]] <- tmp.LD[-drop, -drop]
+          Nsnps[i+1] <- n.snp.tmp - length(drop)
+          snps_list[[i+1]] <- tmp.snps$V2[-drop]
+          LD_list[[i+1]] <- tmp.LD[-drop, -drop]
         } 
       }
       cat(paste0(chr,": ",i,"/",nrow(block_info_tmp),"\n"))
@@ -199,9 +199,9 @@ for (k in 1:length(eth)){
         tmp.LD[is.nan(tmp.LD)] <- 1; tmp.LD <- matrix(tmp.LD, ncol=n.snp.tmp)
         if (n.snp.tmp > 1){
           drop = findCorrelation(tmp.LD,cutoff = 0.999999)
-          Nsnps[1] <- n.snp.tmp - length(drop)
-          snps_list[[1]] <- tmp.snps$V2[-drop]
-          LD_list[[1]] <- tmp.LD[-drop, -drop]
+          Nsnps[i+2] <- n.snp.tmp - length(drop)
+          snps_list[[i+2]] <- tmp.snps$V2[-drop]
+          LD_list[[i+2]] <- tmp.LD[-drop, -drop]
         } 
       }
     }
@@ -216,3 +216,4 @@ for (k in 1:length(eth)){
     cat(paste0(chr, " completed.\n"))
   }
 }
+
