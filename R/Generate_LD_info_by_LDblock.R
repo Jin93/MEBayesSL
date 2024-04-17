@@ -76,7 +76,7 @@ for (k in 1:length(eth)){
   if (!dir.exists(temdir)){dir.create(temdir)}
   ldblocks = bigreadr::fread2(paste0(dir.lassosum, 'data/Berisa.',et[k],'.',gbuild,'.bed')) # load LD block position information
   for (chr in 1:22){
-    temdir = paste0(blockdir,'/tmp/byblock/chr',chr,'/')
+    temdir = paste0(blockdir,'/tmp/LD/chr',chr,'/')
     ldblock = ldblocks[ldblocks$chr == paste0('chr',chr),]
     for (bl in 1:nrow(ldblock)){
       plinkcode = paste(
