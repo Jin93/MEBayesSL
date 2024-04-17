@@ -77,6 +77,7 @@ for (k in 1:length(eth)){
   ldblocks = bigreadr::fread2(paste0(dir.lassosum, 'data/Berisa.',et[k],'.',gbuild,'.bed')) # load LD block position information
   for (chr in 1:22){
     temdir = paste0(blockdir,'/tmp/LD/chr',chr,'/')
+    if (!dir.exists(temdir)){dir.create(temdir)}
     ldblock = ldblocks[ldblocks$chr == paste0('chr',chr),]
     for (bl in 1:nrow(ldblock)){
       plinkcode = paste(
@@ -111,24 +112,9 @@ for (k in 1:length(eth)){
   }
 }
 
-# ---------------------------- step 2 ----------------------------
-# 2_reformat_to_RData_by_chr.R
-suppressMessages(library("optparse"))
-option_list = list(
-  make_option("--packagedir", action="store", default=NA, type='character',
-              help=" [required]"),
-  make_option("--refgeno", action="store", default=NA, type='character',
-              help=" [required]"),
-  make_option("--hg", action="store", default=NA, type='character',
-              help=" [required]"),
-  make_option("--chr", action="store", default=NA, type='character',
-              help=" [required]"),
-  make_option("--workdir0", action="store", default=NA, type='character',
-              help=" [required]"),
-  make_option("--workdir", action="store", default=NA, type='character',
-              help=" [required]")
-)
-opt = parse_args(OptionParser(option_list=option_list))
+
+
+
 
 ####################################################################################################
 ####################################################################################################
@@ -164,11 +150,12 @@ for (k in 1:length(eth)){
                           what="numeric", size=4, n=(n.snp.tmp)^2)
         cat(paste0("Total #of SNP is ",n.snp.tmp,", and ",sum(is.nan(tmp.LD))," is nan.\n"))
         tmp.LD[is.nan(tmp.LD)] <- 1; tmp.LD <- matrix(tmp.LD, ncol=n.snp.tmp)
-        drop = findCorrelation(tmp.LD,cutoff = 0.999999)
-        
-        Nsnps[1] <- n.snp.tmp - length(drop)
-        snps_list[[1]] <- tmp.snps$V2[-drop]
-        LD_list[[1]] <- tmp.LD[-drop, -drop]
+        if (length(n.snp.tmp) > 1){
+          drop = findCorrelation(tmp.LD,cutoff = 0.999999)
+          Nsnps[1] <- n.snp.tmp - length(drop)
+          snps_list[[1]] <- tmp.snps$V2[-drop]
+          LD_list[[1]] <- tmp.LD[-drop, -drop]
+        } 
       }
     }
     #### Median
@@ -185,11 +172,12 @@ for (k in 1:length(eth)){
                           what="numeric", size=4, n=(n.snp.tmp)^2)
         print(paste0("Total #of SNP is ",n.snp.tmp,", and ",sum(is.nan(tmp.LD))," is nan.\n"))
         tmp.LD[is.nan(tmp.LD)] <- 1; tmp.LD <- matrix(tmp.LD, ncol=n.snp.tmp)
-        drop = findCorrelation(tmp.LD,cutoff = 0.999999) # 0.999999
-        
-        Nsnps[i+1] <- n.snp.tmp - length(drop)
-        snps_list[[i+1]] <- tmp.snps$V2[-drop]
-        LD_list[[i+1]] <- tmp.LD[-drop, -drop]
+        if (length(n.snp.tmp) > 1){
+          drop = findCorrelation(tmp.LD,cutoff = 0.999999)
+          Nsnps[1] <- n.snp.tmp - length(drop)
+          snps_list[[1]] <- tmp.snps$V2[-drop]
+          LD_list[[1]] <- tmp.LD[-drop, -drop]
+        } 
       }
       cat(paste0(chr,": ",i,"/",nrow(block_info_tmp),"\n"))
     }
@@ -209,11 +197,12 @@ for (k in 1:length(eth)){
                           what="numeric", size=4, n=(n.snp.tmp)^2)
         cat(paste0("Total #of SNP is ",n.snp.tmp,", and ",sum(is.nan(tmp.LD))," is nan.\n"))
         tmp.LD[is.nan(tmp.LD)] <- 1; tmp.LD <- matrix(tmp.LD, ncol=n.snp.tmp)
-        drop = findCorrelation(tmp.LD,cutoff = 0.999999)
-        
-        Nsnps[i+2] <- n.snp.tmp - length(drop)
-        snps_list[[i+2]] <- tmp.snps$V2[-drop]
-        LD_list[[i+2]] <- tmp.LD[-drop, -drop]
+        if (length(n.snp.tmp) > 1){
+          drop = findCorrelation(tmp.LD,cutoff = 0.999999)
+          Nsnps[1] <- n.snp.tmp - length(drop)
+          snps_list[[1]] <- tmp.snps$V2[-drop]
+          LD_list[[1]] <- tmp.LD[-drop, -drop]
+        } 
       }
     }
     
