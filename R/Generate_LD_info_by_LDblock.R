@@ -150,7 +150,7 @@ for (k in 1:length(eth)){
                           what="numeric", size=4, n=(n.snp.tmp)^2)
         cat(paste0("Total #of SNP is ",n.snp.tmp,", and ",sum(is.nan(tmp.LD))," is nan.\n"))
         tmp.LD[is.nan(tmp.LD)] <- 1; tmp.LD <- matrix(tmp.LD, ncol=n.snp.tmp)
-        if (length(n.snp.tmp) > 1){
+        if (n.snp.tmp > 1){
           drop = findCorrelation(tmp.LD,cutoff = 0.999999)
           Nsnps[1] <- n.snp.tmp - length(drop)
           snps_list[[1]] <- tmp.snps$V2[-drop]
@@ -172,7 +172,7 @@ for (k in 1:length(eth)){
                           what="numeric", size=4, n=(n.snp.tmp)^2)
         print(paste0("Total #of SNP is ",n.snp.tmp,", and ",sum(is.nan(tmp.LD))," is nan.\n"))
         tmp.LD[is.nan(tmp.LD)] <- 1; tmp.LD <- matrix(tmp.LD, ncol=n.snp.tmp)
-        if (length(n.snp.tmp) > 1){
+        if (n.snp.tmp > 1){
           drop = findCorrelation(tmp.LD,cutoff = 0.999999)
           Nsnps[1] <- n.snp.tmp - length(drop)
           snps_list[[1]] <- tmp.snps$V2[-drop]
@@ -197,7 +197,7 @@ for (k in 1:length(eth)){
                           what="numeric", size=4, n=(n.snp.tmp)^2)
         cat(paste0("Total #of SNP is ",n.snp.tmp,", and ",sum(is.nan(tmp.LD))," is nan.\n"))
         tmp.LD[is.nan(tmp.LD)] <- 1; tmp.LD <- matrix(tmp.LD, ncol=n.snp.tmp)
-        if (length(n.snp.tmp) > 1){
+        if (n.snp.tmp > 1){
           drop = findCorrelation(tmp.LD,cutoff = 0.999999)
           Nsnps[1] <- n.snp.tmp - length(drop)
           snps_list[[1]] <- tmp.snps$V2[-drop]
