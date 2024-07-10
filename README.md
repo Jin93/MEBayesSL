@@ -57,15 +57,15 @@ Please choose one of the two LD reference panels according to the training GWAS 
 - 498 EUR, 659 AFR, 347 AMR, 503 EAS, 487 SAS.
 - __Recommended when GWAS training sample sizes are relatively small, e.g., N<sub>GWAS</sub> < 50K for all ancestry groups__.
 
-[EUR reference data](https://www.dropbox.com/scl/fi/3ph161wy3vy6w8quxrvc5/EUR.zip?rlkey=zbf3qx16s5gehyre92lvnepwc&dl=0) (~26.33G): `tar -zxvf EUR.tar.gz`
+[EUR reference data](https://drive.google.com/file/d/1448w1cMdFuBmhnKEpamUBkGWX93WcaI-/view?usp=drive_link) (~26.33G): Google Drive File ID: `1448w1cMdFuBmhnKEpamUBkGWX93WcaI-`; decompress by `tar -zxvf EUR.tar.gz`
 
-[AFR reference data](https://www.dropbox.com/scl/fi/ooh52nts7nn9xh1bjagxh/AFR.zip?rlkey=ap7kh3khonqvvyrrtm1ssm6pp&dl=0) (~36.81G): `tar -zxvf AFR.tar.gz`
+[AFR reference data](https://drive.google.com/file/d/12j9y0brD004HNakC7LoEot8RHFhToVAq/view?usp=drive_link) (~36.81G): Google Drive File ID: `12j9y0brD004HNakC7LoEot8RHFhToVAq`; decompress by `tar -zxvf AFR.tar.gz`
 
-[AMR reference data](https://www.dropbox.com/scl/fi/5xawic4f2sro12kt9o7sw/AMR.zip?rlkey=2szu5360a3z01dc7bb8hnsz6m&dl=0) (~32.82G): `tar -zxvf AMR.tar.gz`
+[AMR reference data](https://drive.google.com/file/d/1ItDxm8mllEAoaUyddd_wz8UTp0clNmLW/view?usp=drive_link) (~32.82G): Google Drive File ID: `1ItDxm8mllEAoaUyddd_wz8UTp0clNmLW`; decompress by `tar -zxvf AMR.tar.gz`
 
-[EAS reference data](https://www.dropbox.com/scl/fi/2qq1ybobaht6740dez09i/EAS.zip?rlkey=pq6x05e9pzl2y53sb1ugzzv4k&dl=0) (~19.90G): `tar -zxvf EAS.tar.gz`
+[EAS reference data](https://drive.google.com/file/d/1z4bztGLssmXmOiA4AHq4jzRQ5u9A-w7-/view?usp=drive_link) (~19.90G): Google Drive File ID: `1z4bztGLssmXmOiA4AHq4jzRQ5u9A-w7-`; decompress by `tar -zxvf EAS.tar.gz`
 
-[SAS reference data](https://www.dropbox.com/scl/fi/a2d7jqa4027w2q2y1u5qt/SAS.zip?rlkey=62fw06o1u8xv8epen8565dpoc&dl=0) (~21.61G): `tar -zxvf SAS.tar.gz`
+[SAS reference data](https://drive.google.com/file/d/1PCiy_rMDGxPpBZpQzRSVNocc9ZwoHt0-/view?usp=drive_link) (~21.61G): Google Drive File ID: `1PCiy_rMDGxPpBZpQzRSVNocc9ZwoHt0-`; decompress by `tar -zxvf SAS.tar.gz`
 
 
 - Install [PLINK1.9](https://www.cog-genomics.org/plink/) and [PLINK2](https://www.cog-genomics.org/plink/2.0/).
